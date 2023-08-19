@@ -33,5 +33,7 @@ Para acessar o swagger navegue até:
 | Framework base para aplicação
 - [mix-test.watch](https://github.com/lpil/mix-test.watch)
 | re-executa os testes quando existe modificação em arquivos
+- [credo](https://github.com/lpil/mix-test.watch)
+| análise estática de código
 - [bee](https://github.com/andridus/mix-test.watch)
-| Cria uma interface menos verbosa através do Ecto.
+| Cria uma api de entidades menos verbosa através do Ecto.
