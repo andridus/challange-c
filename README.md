@@ -18,22 +18,22 @@ Desafio aceito: [link para o desafio](https://github.com/appcumbuca/desafios/blo
 - [ ] Caso todas as transações no banco de dados sejam realizadas novamente a partir do estado inicial de todas as contas, os saldos devem equivaler aos saldos expostos na interface. Em outros termos: Para toda conta, se somarmos os valores de todas as transações no histórico dela a qualquer momento, o saldo total da conta deve ser o saldo atual.
 - [ ] Uma transação só pode ser estornada uma vez.
 
-### Executar a aplicação em ambiente de desenvolvimento,
+### Executar em ambiente de desenvolvimento.
 Execute o seguinte comando no terminal na raiz do projeto.
 `$ _scripts/dev.sh`
 
-Após entrar no bash do container, execute o seguinte comando no terminal :
+Após entrar no bash do container, execute o seguinte comando no terminal:
 `$ iex -S mix phx.server`
 
 Para acessar o swagger navegue até:
 `http://localhost:4001/swagger`
 
-### Bibliotecas de terceiro utilizadas
-- [phoenix framework](https://www.phoenixframework.org/)
+### Bibliotecas de terceiros utilizadas
+- [phoenix framework](https://hexdocs.pm/phoenix)
 | Framework base para aplicação
-- [mix-test.watch](https://github.com/lpil/mix-test.watch)
+- [mix-test.watch](https://hexdocs.pm/mix_test_watch)
 | re-executa os testes quando existe modificação em arquivos
-- [credo](https://github.com/lpil/mix-test.watch)
+- [credo](https://hexdocs.pm/credo)
 | análise estática de código
-- [bee](https://github.com/andridus/mix-test.watch)
+- [bee](https://hexdocs.pm/bee)
 | Cria uma api de entidades menos verbosa através do Ecto.
