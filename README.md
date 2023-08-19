@@ -14,6 +14,7 @@ Para acessar o swagger navegue até:
 
 ### Bibliotecas de terceiro utilizadas
 - [phoenix framework](https://www.phoenixframework.org/)
+| Framework base para aplicação
 - [mix-test.watch](https://github.com/lpil/mix-test.watch)
 | re-executa os testes quando existe modificação em arquivos
 - [bee](https://github.com/andridus/mix-test.watch)
