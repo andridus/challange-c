@@ -1,18 +1,20 @@
 # Cumbuca
 
-To start your Phoenix server:
+Desafio aceito: [link para o desafio](https://github.com/appcumbuca/desafios/blob/master/desafio-back-end.md)
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+### Executar a aplicação em ambiente de desenvolvimento,
+Execute o seguinte comando no terminal na raiz do projeto.
+`$ _scripts/dev.sh`
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+Após entrar no bash do container, execute o seguinte comando no terminal :
+`$ iex -S mix phx.server`
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+Para acessar o swagger navegue até:
+`http://localhost:4001/swagger`
 
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+### Bibliotecas de terceiro utilizadas
+- [phoenix framweork](https://www.phoenixframework.org/)
+- [mix-test.watch](https://github.com/lpil/mix-test.watch)
+Observa modificações dos arquivos e re-executa os testes
+- [bee]((https://github.com/andridus/mix-test.watch))
+Cria uma interface menos verbosa entre o desenvolvedor e o Ecto.
