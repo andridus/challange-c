@@ -37,3 +37,5 @@ Para acessar o swagger navegue até:
 | análise estática de código
 - [bee](https://hexdocs.pm/bee)
 | Cria uma api de entidades menos verbosa através do Ecto.
+- [phoenix_swagger](https://github.com/andridus/phoenix_swagger)
+| Gera o swagger das apis (fork andridus com implementacao do swagger via @doc)

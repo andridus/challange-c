@@ -7,6 +7,20 @@
 # General application configuration
 import Config
 
+config :cumbuca, :swagger,
+  [
+    host: "localhost",
+    port: 4000,
+    scheme: "http",
+    base_module: "Cumbuca",
+    swagger_files: %{
+      "priv/static/swagger.json" => [
+        router: CumbucaWeb.Router,
+        endpoint: CumbucaWeb.Endpoint
+      ]
+    }
+  ]
+config :cumbuca, swagger_json_library: Jason
 config :cumbuca,
   ecto_repos: [Cumbuca.Repo]
 

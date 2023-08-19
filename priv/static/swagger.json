@@ -1,0 +1,44 @@
+{
+  "info": {
+    "version": "1.0",
+    "title": "Cumbuca"
+  },
+  "host": "localhost:localhost",
+  "definitions": {},
+  "swagger": "1.0",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/home": {
+      "get": {
+        "description": "Home page",
+        "operationId": "CumbucaWeb.PageController.home",
+        "parameters": [],
+        "produces": [
+          "text/html"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {}
+            },
+            "description": "Home page"
+          }
+        },
+        "summary": "Home page",
+        "tags": [
+          "Static Pages"
+        ]
+      }
+    }
+  },
+  "customOptions": {
+    "defaultModelsExpandDepth": -1,
+    "docExpansion": "none",
+    "operationsSorter": "alpha",
+    "tagsSorter": "alpha"
+  },
+  "openapi": "3.0.0"
+}
