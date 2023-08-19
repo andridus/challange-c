@@ -1,14 +1,15 @@
 import Config
 
 # Configure your database
+database_url =
+  System.get_env("DATABASE_URL") ||
+    raise """
+    environment variable DATABASE_URL is missing.
+    For example: ecto://USER:PASS@HOST/DATABASE
+    """
 config :cumbuca, Cumbuca.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "cumbuca_dev",
-  stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  url: database_url,
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -19,7 +20,7 @@ config :cumbuca, Cumbuca.Repo,
 config :cumbuca, CumbucaWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
