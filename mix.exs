@@ -8,7 +8,7 @@ defmodule Cumbuca.MixProject do
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      compilers: Mix.compilers ++ [:phoenix_swagger],
+      compilers: Mix.compilers() ++ [:phoenix_swagger],
       aliases: aliases(),
       deps: deps()
     ]
@@ -56,7 +56,9 @@ defmodule Cumbuca.MixProject do
       {:bee, "~> 0.4.2"},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: [:test], runtime: false},
-      {:phoenix_swagger, github: "andridus/phoenix_swagger", only: [:dev]}
+      {:phoenix_swagger, github: "andridus/phoenix_swagger"},
+      {:happy, "~> 1.3.1"},
+      {:brcpfcnpj, "~> 1.0.0"}
     ]
   end
 

@@ -20,14 +20,17 @@ defmodule CumbucaWeb.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", CumbucaWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", CumbucaWeb do
+    pipe_through :api
 
-  scope "/swagger" do
-      forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :cumbuca, swagger_file: "swagger.json"
+    ## account
+    post "/accounts", AccountsController, :create
+    get "/accounts", AccountsController, :all
+    get "/accounts/:account_id", AccountsController, :one
+    put "/accounts/:account_id", AccountsController, :update
+    delete "/accounts/:account_id", AccountsController, :delete
   end
+
   def swagger_info do
     %{
       info: %{
@@ -51,6 +54,10 @@ defmodule CumbucaWeb.Router do
 
       live_dashboard "/dashboard", metrics: CumbucaWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+
+    scope "/swagger" do
+      forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :cumbuca, swagger_file: "swagger.json"
     end
   end
 end

@@ -6,6 +6,9 @@ services:
       context: ..
       dockerfile: _docker/Dockerfile.dev
       no_cache: false
+      args:
+        user_id: ${USER}
+        group_id: ${GROUP}
     command: bash
     tty: true
     stdin_open: true

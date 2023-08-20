@@ -3,28 +3,30 @@ defmodule CumbucaWeb.StatusMessage do
     Messages to response
   """
   require Logger
+
   @messages [
-      {200, :ok},
-      {201, :created},
-      {400, :bad_request},
-      {401, :unauthorized},
-      {403, :forbidden},
-      {404, :not_found},
-      {409, :conflict},
-      {422, :form_error},
-      {500, :internal_server_error},
-      {400, :not_found},
-      {400, :id_is_nil},
-      {400, :was_deleted},
-      {422, :form_error},
-      {200, :ok}
-    ]
+    {200, :ok},
+    {201, :created},
+    {400, :bad_request},
+    {401, :unauthorized},
+    {403, :forbidden},
+    {404, :not_found},
+    {409, :conflict},
+    {422, :form_error},
+    {500, :internal_server_error},
+    ## account
+    {400, :account_not_found},
+    {400, :account_was_deleted},
+    {400, :account_id_is_nil}
+  ]
+  def from_message("param_" <> _key), do: 400
+
   def from_message(message) do
     @messages
     |> List.flatten()
     |> Enum.find(fn
       {_status, ^message} -> true
-      _ -> false
+      {_status, message0} -> to_string(message0) == message
     end)
     |> case do
       nil ->
@@ -45,7 +47,7 @@ defmodule CumbucaWeb.StatusMessage do
     end)
     |> case do
       nil ->
-        Logger.error("Not found message '#{status}'")
+        Logger.error("Not found status '#{status}'")
         400
 
       {_status, message} ->

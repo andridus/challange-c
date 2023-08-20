@@ -3,14 +3,478 @@
     "version": "1.0",
     "title": "Cumbuca"
   },
-  "host": "localhost:localhost",
   "definitions": {},
   "swagger": "1.0",
-  "schemes": [
-    "https",
-    "http"
-  ],
   "paths": {
+    "/api/accounts": {
+      "get": {
+        "description": "Get all accounts",
+        "operationId": "CumbucaWeb.AccountsController.all",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": [
+                    {
+                      "description": "fields available for `BASIC` permission",
+                      "example": {
+                        "active?": true,
+                        "first_name": "Joe",
+                        "last_name": "Doe",
+                        "status": "ACTIVE"
+                      },
+                      "properties": {
+                        "active?": {
+                          "description": "active account?",
+                          "example": true,
+                          "type": "boolean"
+                        },
+                        "first_name": {
+                          "description": "first name of account user",
+                          "example": "Joe",
+                          "type": "string"
+                        },
+                        "inserted_at": {
+                          "type": "utc_datetime"
+                        },
+                        "last_name": {
+                          "description": "last name of account user",
+                          "example": "Doe",
+                          "type": "string"
+                        },
+                        "status": {
+                          "default": "INACTIVE",
+                          "description": "status of account",
+                          "enum": [
+                            "ACTIVE",
+                            "INACTIVE",
+                            "ACCESS_BLOCKED",
+                            "CLOSED"
+                          ],
+                          "example": "ACTIVE",
+                          "type": "Elixir.Ecto.Enum"
+                        },
+                        "updated_at": {
+                          "type": "utc_datetime"
+                        }
+                      },
+                      "required": [],
+                      "title": "Account Entity",
+                      "type": "object"
+                    }
+                  ],
+                  "type": "array"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Get all accounts",
+        "tags": [
+          "accounts"
+        ]
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Create account",
+        "operationId": "CumbucaWeb.AccountsController.create",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "balance": {
+                    "description": "Initial Balance",
+                    "example": 10000,
+                    "type": "integer"
+                  },
+                  "cpf": {
+                    "description": "CPF",
+                    "example": "123.456.789-11",
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "description": "First Name",
+                    "example": "Joe",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Last Name",
+                    "example": "Doe",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "fields available for `BASIC` permission",
+                  "example": {
+                    "active?": true,
+                    "first_name": "Joe",
+                    "last_name": "Doe",
+                    "status": "ACTIVE"
+                  },
+                  "properties": {
+                    "active?": {
+                      "description": "active account?",
+                      "example": true,
+                      "type": "boolean"
+                    },
+                    "first_name": {
+                      "description": "first name of account user",
+                      "example": "Joe",
+                      "type": "string"
+                    },
+                    "inserted_at": {
+                      "type": "utc_datetime"
+                    },
+                    "last_name": {
+                      "description": "last name of account user",
+                      "example": "Doe",
+                      "type": "string"
+                    },
+                    "status": {
+                      "default": "INACTIVE",
+                      "description": "status of account",
+                      "enum": [
+                        "ACTIVE",
+                        "INACTIVE",
+                        "ACCESS_BLOCKED",
+                        "CLOSED"
+                      ],
+                      "example": "ACTIVE",
+                      "type": "Elixir.Ecto.Enum"
+                    },
+                    "updated_at": {
+                      "type": "utc_datetime"
+                    }
+                  },
+                  "required": [],
+                  "title": "Account Entity",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Create account",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/api/accounts/{account_id}": {
+      "delete": {
+        "description": "Delete account by id",
+        "operationId": "CumbucaWeb.AccountsController.delete",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Account id",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "fields available for `BASIC` permission",
+                  "example": {
+                    "active?": true,
+                    "first_name": "Joe",
+                    "last_name": "Doe",
+                    "status": "ACTIVE"
+                  },
+                  "properties": {
+                    "active?": {
+                      "description": "active account?",
+                      "example": true,
+                      "type": "boolean"
+                    },
+                    "first_name": {
+                      "description": "first name of account user",
+                      "example": "Joe",
+                      "type": "string"
+                    },
+                    "inserted_at": {
+                      "type": "utc_datetime"
+                    },
+                    "last_name": {
+                      "description": "last name of account user",
+                      "example": "Doe",
+                      "type": "string"
+                    },
+                    "status": {
+                      "default": "INACTIVE",
+                      "description": "status of account",
+                      "enum": [
+                        "ACTIVE",
+                        "INACTIVE",
+                        "ACCESS_BLOCKED",
+                        "CLOSED"
+                      ],
+                      "example": "ACTIVE",
+                      "type": "Elixir.Ecto.Enum"
+                    },
+                    "updated_at": {
+                      "type": "utc_datetime"
+                    }
+                  },
+                  "required": [],
+                  "title": "Account Entity",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Delete account by id",
+        "tags": [
+          "accounts"
+        ]
+      },
+      "get": {
+        "description": "Get one account by id",
+        "operationId": "CumbucaWeb.AccountsController.one",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Account id",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "fields available for `BASIC` permission",
+                  "example": {
+                    "active?": true,
+                    "first_name": "Joe",
+                    "last_name": "Doe",
+                    "status": "ACTIVE"
+                  },
+                  "properties": {
+                    "active?": {
+                      "description": "active account?",
+                      "example": true,
+                      "type": "boolean"
+                    },
+                    "first_name": {
+                      "description": "first name of account user",
+                      "example": "Joe",
+                      "type": "string"
+                    },
+                    "inserted_at": {
+                      "type": "utc_datetime"
+                    },
+                    "last_name": {
+                      "description": "last name of account user",
+                      "example": "Doe",
+                      "type": "string"
+                    },
+                    "status": {
+                      "default": "INACTIVE",
+                      "description": "status of account",
+                      "enum": [
+                        "ACTIVE",
+                        "INACTIVE",
+                        "ACCESS_BLOCKED",
+                        "CLOSED"
+                      ],
+                      "example": "ACTIVE",
+                      "type": "Elixir.Ecto.Enum"
+                    },
+                    "updated_at": {
+                      "type": "utc_datetime"
+                    }
+                  },
+                  "required": [],
+                  "title": "Account Entity",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Get one account by id",
+        "tags": [
+          "accounts"
+        ]
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Update account",
+        "operationId": "CumbucaWeb.AccountsController.update",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Account id",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "first_name": {
+                    "description": "First Name",
+                    "example": "Joe",
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "description": "Last Name",
+                    "example": "Doe",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "fields available for `BASIC` permission",
+                  "example": {
+                    "active?": true,
+                    "first_name": "Joe",
+                    "last_name": "Doe",
+                    "status": "ACTIVE"
+                  },
+                  "properties": {
+                    "active?": {
+                      "description": "active account?",
+                      "example": true,
+                      "type": "boolean"
+                    },
+                    "first_name": {
+                      "description": "first name of account user",
+                      "example": "Joe",
+                      "type": "string"
+                    },
+                    "inserted_at": {
+                      "type": "utc_datetime"
+                    },
+                    "last_name": {
+                      "description": "last name of account user",
+                      "example": "Doe",
+                      "type": "string"
+                    },
+                    "status": {
+                      "default": "INACTIVE",
+                      "description": "status of account",
+                      "enum": [
+                        "ACTIVE",
+                        "INACTIVE",
+                        "ACCESS_BLOCKED",
+                        "CLOSED"
+                      ],
+                      "example": "ACTIVE",
+                      "type": "Elixir.Ecto.Enum"
+                    },
+                    "updated_at": {
+                      "type": "utc_datetime"
+                    }
+                  },
+                  "required": [],
+                  "title": "Account Entity",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Update account",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/home": {
       "get": {
         "description": "Home page",
@@ -19,6 +483,7 @@
         "produces": [
           "text/html"
         ],
+        "requestBody": {},
         "responses": {
           "200": {
             "content": {

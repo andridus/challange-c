@@ -16,6 +16,7 @@ defmodule CumbucaWeb.ConnCase do
   """
 
   use ExUnit.CaseTemplate
+  import Plug.Conn
 
   using do
     quote do
@@ -30,6 +31,21 @@ defmodule CumbucaWeb.ConnCase do
       import CumbucaWeb.ConnCase
     end
   end
+
+  def authed_conn(%{authed: user}), do: authed_conn(user)
+
+  def authed_conn(user) do
+    {_, token, _} = user |> CumbucaWeb.Auth.encode_and_sign()
+
+    Phoenix.ConnTest.build_conn()
+    |> put_req_header("authorization", "Bearer #{token}")
+  end
+
+  def anonymous_conn do
+    Phoenix.ConnTest.build_conn()
+  end
+
+  def get_resp_body(conn), do: conn |> Map.get(:resp_body) |> Jason.decode!()
 
   setup tags do
     Cumbuca.DataCase.setup_sandbox(tags)

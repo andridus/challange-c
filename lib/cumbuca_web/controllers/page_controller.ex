@@ -1,7 +1,7 @@
 defmodule CumbucaWeb.PageController do
   use CumbucaWeb, :controller
 
- @doc """
+  @doc """
     Home page
 
     ---| swagger |---

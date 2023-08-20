@@ -3,9 +3,9 @@ defmodule CumbucaWeb.Response do
     Cieb.Reponse
   """
 
+  alias CumbucaWeb.StatusMessage
   alias Phoenix.Controller
   alias Plug.Conn.Utils
-  alias CumbucaWeb.StatusMessage
 
   import Plug.Conn
 
@@ -82,17 +82,29 @@ defmodule CumbucaWeb.Response do
       path,
       status,
       :html,
-       %PhoenixSwagger.Schema{ properties: %{}}
+      %PhoenixSwagger.Schema{properties: %{}}
     )
   end
+
   def swagger(path, status, opt) do
     import PhoenixSwagger.Path
+    data0 = opt[:data]
+
+    data =
+      if is_list(data0) do
+        %PhoenixSwagger.Schema{
+          type: "array",
+          items: data0
+        }
+      else
+        data0
+      end
 
     response(
       path,
       status,
       opt[:message] || StatusMessage.from_status(status),
-      parse_with_schema(status, opt[:message], opt[:data])
+      parse_with_schema(status, opt[:message], data)
     )
   end
 

@@ -3,7 +3,8 @@
 Desafio aceito: [link para o desafio](https://github.com/appcumbuca/desafios/blob/master/desafio-back-end.md)
 
 ## Checklist
-- [ ] Cadastro de conta
+- [x] Cadastro de conta
+- [ ] Update Password
 - [ ] Autenticação
 - [ ] Cadastro de Transação
 - [ ] Estorno de Transação
@@ -17,6 +18,13 @@ Desafio aceito: [link para o desafio](https://github.com/appcumbuca/desafios/blo
 - [ ] Todas as transações realizadas devem ser registradas no banco de dados.
 - [ ] Caso todas as transações no banco de dados sejam realizadas novamente a partir do estado inicial de todas as contas, os saldos devem equivaler aos saldos expostos na interface. Em outros termos: Para toda conta, se somarmos os valores de todas as transações no histórico dela a qualquer momento, o saldo total da conta deve ser o saldo atual.
 - [ ] Uma transação só pode ser estornada uma vez.
+
+### Algumas explicações
+Utilizamos uma biblioteca própria (Bee), desenvolvida com o propósito de facilitar o uso do Ecto para as funções de CRUD mais comuns como Insert, Update, Delete e Get.
+
+Dessa maneira, ao invés de utilizarmos `Repo.get(Account, id)`, utilizamos `Account.Api.get(id)`. Essa melhoria de leiturabilidade e manutenibilidade fornecida pela biblioteca Bee tem custo zero e evita.
+
+Utilizamos uma fork da biblioteca phoenix_swagger, em que implementamos uma forma otimize a leiturabilidade quando aplicada sobre as actions e somente então utilizar o comportamento esperado da biblioteca e gerar o swagger.
 
 ### Executar em ambiente de desenvolvimento.
 Execute o seguinte comando no terminal na raiz do projeto.
@@ -36,6 +44,15 @@ Para acessar o swagger navegue até:
 - [credo](https://hexdocs.pm/credo)
 | análise estática de código
 - [bee](https://hexdocs.pm/bee)
-| Cria uma api de entidades menos verbosa através do Ecto.
+| cria uma api de entidades menos verbosa através do Ecto.
 - [phoenix_swagger](https://github.com/andridus/phoenix_swagger)
-| Gera o swagger das apis (fork andridus com implementacao do swagger via @doc)
+| gera o swagger das apis (fork andridus com implementacao do swagger via @doc)
+- [happy](https://github.com/vic/happy)
+| cria um fluxo de operações com facil gestão de erros
+- [brcpfcnpj](https://hexdocs.pm/brcpfcnpj)
+| manipula cpf e cnpj com validações e outras funções úteis
+
+
+## Coisas a fazer
+ - [ ] swagger devolver lista de objetos na resposta
+ - [ ] swagger oneOf para as permissões

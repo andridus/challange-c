@@ -8,21 +8,22 @@
 import Config
 
 config :cumbuca, :swagger,
-  [
-    host: "localhost",
-    port: 4000,
-    scheme: "http",
-    base_module: "Cumbuca",
-    swagger_files: %{
-      "priv/static/swagger.json" => [
-        router: CumbucaWeb.Router,
-        endpoint: CumbucaWeb.Endpoint
-      ]
-    }
-  ]
+  host: "localhost",
+  port: 4000,
+  scheme: "http",
+  base_module: "Cumbuca",
+  swagger_files: %{
+    "priv/static/swagger.json" => [
+      router: CumbucaWeb.Router
+    ]
+  }
+
 config :cumbuca, swagger_json_library: Jason
-config :cumbuca,
-  ecto_repos: [Cumbuca.Repo]
+
+config :cumbuca, ecto_repos: [Cumbuca.Repo]
+config :cumbuca, Cumbuca.Repo, migration_primary_key: [type: :binary_id]
+
+config :bee, :repo, Cumbuca.Repo
 
 # Configures the endpoint
 config :cumbuca, CumbucaWeb.Endpoint,
