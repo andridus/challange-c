@@ -79,7 +79,15 @@ defmodule Cumbuca.Core.Account do
       field :__transaction_password__, :string, virtual: true
 
       field :__action__, Ecto.Enum,
-        values: [:CREATE, :ACTIVATE, :DEACTIVATE, :BLOCKING_ACCESS, :SET_PASSWORD, :CLOSE],
+        values: [
+          :CREATE,
+          :ACTIVATE,
+          :DEACTIVATE,
+          :BLOCKING_ACCESS,
+          :SET_ACCESS_PASSWORD,
+          :SET_TRANSACTION_PASSWORD,
+          :CLOSE
+        ],
         virtual: true
 
       # --
@@ -94,6 +102,9 @@ defmodule Cumbuca.Core.Account do
   ## So, for changeset actions based, don`t need distinct this for now.
   def changeset_insert(model, attrs), do: changeset(model, attrs)
   def changeset_update(model, attrs), do: changeset(model, attrs)
+
+  ## Changeset for tests purpose
+  def changeset_factory(model, attrs), do: changeset_(model, attrs, :insert)
 
   def changeset(model, attrs),
     do:
@@ -110,7 +121,11 @@ defmodule Cumbuca.Core.Account do
   def run_action(model, %{__action__: :BLOCKING_ACCESS} = attr),
     do: blocking_access_action(model, attr)
 
-  def run_action(model, %{__action__: :SET_PASSWORD} = attr), do: set_password_action(model, attr)
+  def run_action(model, %{__action__: :SET_ACCESS_PASSWORD} = attr),
+    do: set_access_password_action(model, attr)
+
+  def run_action(model, %{__action__: :SET_TRANSACTION_PASSWORD} = attr),
+    do: set_transaction_password_action(model, attr)
 
   defp create_action(model, attrs) do
     fields = [:first_name, :last_name, :cpf, :initial_balance]
@@ -150,10 +165,16 @@ defmodule Cumbuca.Core.Account do
     |> put_change(:blocked_access?, true)
   end
 
-  defp set_password_action(model, attrs) do
+  defp set_access_password_action(model, attrs) do
     model
-    |> cast(attrs, [])
-    |> put_password()
+    |> cast(attrs, [:__access_password__, :access_password_hash])
+    |> put_access_password()
+  end
+
+  defp set_transaction_password_action(model, attrs) do
+    model
+    |> cast(attrs, [:__transaction_password__, :transaction_password_hash])
+    |> put_transaction_password()
   end
 
   defp close_action(model, attrs) do
@@ -171,9 +192,26 @@ defmodule Cumbuca.Core.Account do
     end
   end
 
-  defp put_password(changeset) do
-    ## TODO: validation password rules and create an password
-    changeset
+  defp put_access_password(%{changes: %{__access_password__: password}} = changeset) do
+    if password && changeset.valid? do
+      changeset
+      |> validate_length(:__access_password__, length: 8)
+      |> put_change(:access_password_hash, Bcrypt.hash_pwd_salt(password))
+      |> delete_change(:__access_password__)
+    else
+      changeset
+    end
+  end
+
+  defp put_transaction_password(%{changes: %{__transaction_password__: password}} = changeset) do
+    if password && changeset.valid? do
+      changeset
+      |> validate_length(:__transaction_password__, length: 8)
+      |> put_change(:transaction_password_hash, Base.encode64(password))
+      |> delete_change(:__transaction_password__)
+    else
+      changeset
+    end
   end
 
   defp put_status(changeset) do
@@ -198,6 +236,18 @@ defmodule Cumbuca.Core.Account do
 
     # The bee api provides default functions to realize entity crud without Ecto verbosity
     use Bee.Api
+
+    def check_access_password(%{access_password_hash: hashed_password}, access_password) do
+      Bcrypt.verify_pass(access_password, hashed_password)
+    end
+
+    def check_transaction_password(
+          %{transaction_password_hash: hashed_password},
+          transaction_password
+        ) do
+      ## TODO: validate transaction password
+      :ok
+    end
 
     def get_balance(_account) do
       ## TODO: get account balance

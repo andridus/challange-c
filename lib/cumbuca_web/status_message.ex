@@ -17,7 +17,11 @@ defmodule CumbucaWeb.StatusMessage do
     ## account
     {400, :account_not_found},
     {400, :account_was_deleted},
-    {400, :account_id_is_nil}
+    {400, :account_id_is_nil},
+    {400, :password_dont_match},
+    {400, :password_length_should_be_four},
+    ## auth
+    {400, :cpf_or_password_invalid}
   ]
   def from_message("param_" <> _key), do: 400
 

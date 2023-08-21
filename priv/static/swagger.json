@@ -95,15 +95,7 @@
         ],
         "description": "Create account",
         "operationId": "CumbucaWeb.AccountsController.create",
-        "parameters": [
-          {
-            "description": "Access Token",
-            "in": "header",
-            "name": "authorization",
-            "required": false,
-            "type": "string"
-          }
-        ],
+        "parameters": [],
         "produces": [
           "application/json"
         ],
@@ -472,6 +464,219 @@
         "summary": "Update account",
         "tags": [
           "accounts"
+        ]
+      }
+    },
+    "/api/accounts/{account_id}/access-password": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Update access password",
+        "operationId": "CumbucaWeb.AccountsController.patch_access_password",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Account id",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "access_password": {
+                    "description": "Access Password",
+                    "example": "12345678",
+                    "type": "string"
+                  },
+                  "access_password_repeat": {
+                    "description": "Access Password Repeat",
+                    "example": "12345678",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": "access_password_updated"
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Update access password",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/api/accounts/{account_id}/transaction-password": {
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Update transaction password",
+        "operationId": "CumbucaWeb.AccountsController.patch_transaction_password",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Account id",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "transaction_password": {
+                    "description": "Transaction Password",
+                    "example": "12345678",
+                    "type": "string"
+                  },
+                  "transaction_password_repeat": {
+                    "description": "Transaction Password Repeat",
+                    "example": "12345678",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": "transaction_password_updated"
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Update transaction password",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Login",
+        "operationId": "CumbucaWeb.AuthController.login",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "access_password": {
+                    "description": "Access Passsword",
+                    "example": "12345678",
+                    "type": "string"
+                  },
+                  "cpf": {
+                    "description": "CPF",
+                    "example": "123.456.789-11",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": [],
+                  "type": "array"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Login",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Login",
+        "operationId": "CumbucaWeb.AuthController.logout",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": [],
+                  "type": "array"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Login",
+        "tags": [
+          "auth"
         ]
       }
     },

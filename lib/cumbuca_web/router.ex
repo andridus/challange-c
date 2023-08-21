@@ -12,6 +12,12 @@ defmodule CumbucaWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug CumbucaWeb.Auth.Pipeline
+  end
+
+  pipeline :authed do
+    plug CumbucaWeb.Auth.Pipeline
+    plug Guardian.Plug.EnsureAuthenticated
   end
 
   scope "/", CumbucaWeb do
@@ -21,14 +27,35 @@ defmodule CumbucaWeb.Router do
   end
 
   scope "/api", CumbucaWeb do
-    pipe_through :api
+    pipe_through [:api]
+
+    ## auth
+
+    scope "/auth" do
+      post "/login", AuthController, :login
+
+      scope "/" do
+        pipe_through [:authed]
+        post "/logout", AuthController, :logout
+      end
+    end
 
     ## account
     post "/accounts", AccountsController, :create
-    get "/accounts", AccountsController, :all
-    get "/accounts/:account_id", AccountsController, :one
-    put "/accounts/:account_id", AccountsController, :update
-    delete "/accounts/:account_id", AccountsController, :delete
+
+    scope "/" do
+      pipe_through [:authed]
+      get "/accounts", AccountsController, :all
+      get "/accounts/:account_id", AccountsController, :one
+      put "/accounts/:account_id", AccountsController, :update
+      patch "/accounts/:account_id/access-password", AccountsController, :patch_access_password
+
+      patch "/accounts/:account_id/transaction-password",
+            AccountsController,
+            :patch_transaction_password
+
+      delete "/accounts/:account_id", AccountsController, :delete
+    end
   end
 
   def swagger_info do

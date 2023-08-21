@@ -1,6 +1,8 @@
 defmodule CumbucaWeb.AccountsControllerTest do
   use CumbucaWeb.ConnCase
 
+  alias Cumbuca.Core.Account
+
   describe "CRUD Accounts" do
     setup do
       :ok
@@ -123,7 +125,8 @@ defmodule CumbucaWeb.AccountsControllerTest do
         balance: 0
       }
 
-      post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
+      assert %{"data" => account} =
+               post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
 
       ## Second account
       params1 = %{
@@ -133,9 +136,9 @@ defmodule CumbucaWeb.AccountsControllerTest do
         balance: 0
       }
 
-      post(anonymous_conn(), ~p"/api/accounts", params1) |> get_resp_body()
+      post(anonymous_conn(), ~p"/api/accounts", params1)
 
-      response = get(anonymous_conn(), ~p"/api/accounts") |> get_resp_body()
+      response = get(authed_conn(account), ~p"/api/accounts") |> get_resp_body()
 
       assert %{"data" => [one | _] = data} = response
       assert 2 = Enum.count(data)
@@ -158,10 +161,13 @@ defmodule CumbucaWeb.AccountsControllerTest do
         balance: 0
       }
 
-      assert %{"data" => %{"id" => id}} =
+      assert %{"data" => %{"id" => id} = account} =
                post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
 
-      response = get(anonymous_conn(), ~p"/api/accounts/#{id}") |> get_resp_body()
+      assert %{"message" => "unauthenticated"} =
+               get(anonymous_conn(), ~p"/api/accounts/#{id}") |> get_resp_body()
+
+      response = get(authed_conn(account), ~p"/api/accounts/#{id}") |> get_resp_body()
 
       assert %{
                "data" =>
@@ -195,7 +201,7 @@ defmodule CumbucaWeb.AccountsControllerTest do
         balance: 0
       }
 
-      assert %{"data" => %{"id" => id}} =
+      assert %{"data" => %{"id" => id} = account} =
                post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
 
       # Update First account
@@ -203,10 +209,13 @@ defmodule CumbucaWeb.AccountsControllerTest do
         first_name: "Jonh"
       }
 
-      assert %{"data" => %{"id" => id, "first_name" => "Jonh"}} =
+      assert %{"message" => "unauthenticated"} =
                put(anonymous_conn(), ~p"/api/accounts/#{id}", params0) |> get_resp_body()
 
-      response = get(anonymous_conn(), ~p"/api/accounts/#{id}") |> get_resp_body()
+      assert %{"data" => %{"id" => id, "first_name" => "Jonh"}} =
+               put(authed_conn(account), ~p"/api/accounts/#{id}", params0) |> get_resp_body()
+
+      response = get(authed_conn(account), ~p"/api/accounts/#{id}") |> get_resp_body()
 
       assert %{
                "data" => %{
@@ -226,9 +235,9 @@ defmodule CumbucaWeb.AccountsControllerTest do
       }
 
       assert %{"data" => %{"id" => id, "last_name" => "Updated"}} =
-               put(anonymous_conn(), ~p"/api/accounts/#{id}", params1) |> get_resp_body()
+               put(authed_conn(account), ~p"/api/accounts/#{id}", params1) |> get_resp_body()
 
-      response = get(anonymous_conn(), ~p"/api/accounts/#{id}") |> get_resp_body()
+      response = get(authed_conn(account), ~p"/api/accounts/#{id}") |> get_resp_body()
 
       assert %{
                "data" => %{
@@ -244,14 +253,28 @@ defmodule CumbucaWeb.AccountsControllerTest do
     end
 
     test "PUT /api/accounts/{account_id} - try update account that don't exists" do
+      # First account
+      params0 = %{
+        first_name: "Joe",
+        last_name: "Doe",
+        cpf: Brcpfcnpj.cpf_generate(),
+        balance: 0
+      }
+
+      assert %{"data" => account} =
+               post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
+
       id = Ecto.UUID.generate()
 
       params0 = %{
         first_name: "Jonh"
       }
 
-      assert %{"message" => "account_not_found"} =
+      assert %{"message" => "unauthenticated"} =
                put(anonymous_conn(), ~p"/api/accounts/#{id}", params0) |> get_resp_body()
+
+      assert %{"message" => "account_not_found"} =
+               put(authed_conn(account), ~p"/api/accounts/#{id}", params0) |> get_resp_body()
     end
 
     test "DELETE /api/accounts - show all accounts" do
@@ -263,10 +286,10 @@ defmodule CumbucaWeb.AccountsControllerTest do
         balance: 0
       }
 
-      assert %{"data" => %{"id" => id}} =
+      assert %{"data" => %{"id" => id} = account} =
                post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
 
-      response = delete(anonymous_conn(), ~p"/api/accounts/#{id}") |> get_resp_body()
+      response = delete(authed_conn(account), ~p"/api/accounts/#{id}") |> get_resp_body()
 
       assert %{
                "data" => %{
@@ -280,11 +303,169 @@ defmodule CumbucaWeb.AccountsControllerTest do
                }
              } = response
 
-      response = get(anonymous_conn(), ~p"/api/accounts/#{id}") |> get_resp_body()
+      response = get(authed_conn(account), ~p"/api/accounts/#{id}") |> get_resp_body()
       assert %{"message" => "account_not_found"} = response
     end
 
-    ## TODO: Test for update password
+    test "PATCH /api/accounts/{account_id}/access-password - creates a access password" do
+      params0 = %{
+        first_name: "Joe",
+        last_name: "Doe",
+        cpf: Brcpfcnpj.cpf_generate(),
+        balance: 0
+      }
+
+      assert %{"data" => %{"id" => id} = account} =
+               post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
+
+      # Update password
+      params1 = %{
+        access_password: "12345678",
+        repeat_access_password: "12345678"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/access-password", params1)
+        |> get_resp_body()
+
+      assert %{"data" => "access_password_updated"} = response
+
+      {:ok, %{access_password_hash: hash}} = Account.Api.get(id)
+      refute is_nil(hash)
+    end
+
+    test "PATCH /api/accounts/{account_id}/access-password - creation fail" do
+      params0 = %{
+        first_name: "Joe",
+        last_name: "Doe",
+        cpf: Brcpfcnpj.cpf_generate(),
+        balance: 0
+      }
+
+      assert %{"data" => %{"id" => id} = account} =
+               post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
+
+      # Password don`t macht
+      params1 = %{
+        access_password: "12345678",
+        repeat_access_password: "123456789"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/access-password", params1)
+        |> get_resp_body()
+
+      assert %{"message" => "password_dont_match"} = response
+
+      # missing repeat_access_password field
+      params1 = %{
+        access_password: "12345"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/access-password", params1)
+        |> get_resp_body()
+
+      assert %{"message" => "param_repeat_access_password_not_found"} = response
+
+      # missing access_password field
+      params1 = %{
+        repeat_access_password: "12345"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/access-password", params1)
+        |> get_resp_body()
+
+      assert %{"message" => "param_access_password_not_found"} = response
+    end
+
+    test "PATCH /api/accounts/{account_id}/transaction-password - creates a transaction password" do
+      params0 = %{
+        first_name: "Joe",
+        last_name: "Doe",
+        cpf: Brcpfcnpj.cpf_generate(),
+        balance: 0
+      }
+
+      assert %{"data" => %{"id" => id} = account} =
+               post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
+
+      # Update password
+      params1 = %{
+        transaction_password: "1234",
+        repeat_transaction_password: "1234"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/transaction-password", params1)
+        |> get_resp_body()
+
+      assert %{"data" => "transaction_password_updated"} = response
+
+      {:ok, %{transaction_password_hash: hash}} = Account.Api.get(id)
+      refute is_nil(hash)
+      assert {:ok, "1234"} = Base.decode64(hash)
+    end
+
+    test "PATCH /api/accounts/{account_id}/transaction-password - creation fail" do
+      params0 = %{
+        first_name: "Joe",
+        last_name: "Doe",
+        cpf: Brcpfcnpj.cpf_generate(),
+        balance: 0
+      }
+
+      assert %{"data" => %{"id" => id} = account} =
+               post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
+
+      # Password don`t macht
+      params1 = %{
+        transaction_password: "1234",
+        repeat_transaction_password: "12345"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/transaction-password", params1)
+        |> get_resp_body()
+
+      assert %{"message" => "password_dont_match"} = response
+
+      # Password with not specified length
+      params1 = %{
+        transaction_password: "12345",
+        repeat_transaction_password: "12345"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/transaction-password", params1)
+        |> get_resp_body()
+
+      assert %{"message" => "password_length_should_be_four"} = response
+
+      # missing repeat_transaction_password field
+      params1 = %{
+        transaction_password: "12345"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/transaction-password", params1)
+        |> get_resp_body()
+
+      assert %{"message" => "param_repeat_transaction_password_not_found"} = response
+
+      # missing transaction_password field
+      params1 = %{
+        repeat_transaction_password: "12345"
+      }
+
+      response =
+        patch(authed_conn(account), ~p"/api/accounts/#{id}/transaction-password", params1)
+        |> get_resp_body()
+
+      assert %{"message" => "param_transaction_password_not_found"} = response
+    end
+
     ## TODO: Test for deactivate account
     ## TODO: Test to close account
     ## TODO: Test to cant delete account, but set CLOSED

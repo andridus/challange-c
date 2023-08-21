@@ -23,6 +23,10 @@ config :cumbuca, swagger_json_library: Jason
 config :cumbuca, ecto_repos: [Cumbuca.Repo]
 config :cumbuca, Cumbuca.Repo, migration_primary_key: [type: :binary_id]
 
+config :cumbuca, CumbucaWeb.Auth,
+  issuer: "cumbuca",
+  secret_key: "rqvarp+9WBlj4mywg3W3Bz0iSvS0m3aE5FCl9MOTAuHddiwYxjMUXXA+6/T2W9Fh"
+
 config :bee, :repo, Cumbuca.Repo
 
 # Configures the endpoint

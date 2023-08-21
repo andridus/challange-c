@@ -32,10 +32,22 @@ defmodule CumbucaWeb.ConnCase do
     end
   end
 
-  def authed_conn(%{authed: user}), do: authed_conn(user)
+  def authed_conn(token) when is_bitstring(token) do
+    Phoenix.ConnTest.build_conn()
+    |> put_req_header("authorization", "Bearer #{token}")
+  end
 
-  def authed_conn(user) do
-    {_, token, _} = user |> CumbucaWeb.Auth.encode_and_sign()
+  def authed_conn(%{authed: account}), do: authed_conn(account)
+
+  def authed_conn(%{"id" => id} = account),
+    do:
+      Map.to_list(account)
+      |> Enum.map(fn {x, y} -> {String.to_atom(x), y} end)
+      |> Map.new()
+      |> authed_conn()
+
+  def authed_conn(account) do
+    {_, token, _} = account |> CumbucaWeb.Auth.encode_and_sign()
 
     Phoenix.ConnTest.build_conn()
     |> put_req_header("authorization", "Bearer #{token}")

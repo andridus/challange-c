@@ -4,8 +4,9 @@ Desafio aceito: [link para o desafio](https://github.com/appcumbuca/desafios/blo
 
 ## Checklist
 - [x] Cadastro de conta
-- [ ] Update Password
-- [ ] Autenticação
+- [x] Atualização de senha de acessoa a conta
+- [x] Autenticação
+- [ ] Atualização de senha de transacao da conta
 - [ ] Cadastro de Transação
 - [ ] Estorno de Transação
 - [ ] Busca de Transações por data
@@ -51,6 +52,8 @@ Para acessar o swagger navegue até:
 | cria um fluxo de operações com facil gestão de erros
 - [brcpfcnpj](https://hexdocs.pm/brcpfcnpj)
 | manipula cpf e cnpj com validações e outras funções úteis
+- [guardian](https://hexdocs.pm/guardian)
+| autenticação de usuário
 
 
 ## Coisas a fazer

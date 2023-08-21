@@ -33,6 +33,7 @@ defmodule Cumbuca.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
@@ -58,7 +59,8 @@ defmodule Cumbuca.MixProject do
       {:mix_test_watch, "~> 1.0", only: [:test], runtime: false},
       {:phoenix_swagger, github: "andridus/phoenix_swagger"},
       {:happy, "~> 1.3.1"},
-      {:brcpfcnpj, "~> 1.0.0"}
+      {:brcpfcnpj, "~> 1.0.0"},
+      {:guardian, "~> 2.0"}
     ]
   end
 

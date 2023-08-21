@@ -1,7 +1,7 @@
 defmodule CumbucaWeb.AccountsController do
   use CumbucaWeb, :controller
 
-  alias Cumbuca.AccountsContext
+  alias Cumbuca.AccountContext
   alias CumbucaWeb.{Auth, Response}
 
   @doc """
@@ -12,7 +12,6 @@ defmodule CumbucaWeb.AccountsController do
       post "/api/accounts"
       consumes "application/json"
       produces "application/json"
-      parameter "authorization", :header, :string, "Access Token"
       request_body do
         first_name :string, "First Name", example: "Joe"
         last_name :string, "Last Name", example: "Doe"
@@ -26,7 +25,7 @@ defmodule CumbucaWeb.AccountsController do
     params
     |> Map.put("authed", Auth.get_user(conn))
     |> Map.put("permission", Auth.get_permission(conn))
-    |> AccountsContext.create_account()
+    |> AccountContext.create_account()
     |> Response.pipe(conn)
   end
 
@@ -53,7 +52,61 @@ defmodule CumbucaWeb.AccountsController do
     params
     |> Map.put("authed", Auth.get_user(conn))
     |> Map.put("permission", Auth.get_permission(conn))
-    |> AccountsContext.update_account()
+    |> AccountContext.update_account()
+    |> Response.pipe(conn)
+  end
+
+  @doc """
+    Update access password
+
+    ---| swagger |---
+      tag "accounts"
+      patch "/api/accounts/{account_id}/access-password"
+      consumes "application/json"
+      produces "application/json"
+      parameter "authorization", :header, :string, "Access Token"
+      parameters do
+        account_id :path, :string, "Account id", required: true
+      end
+      request_body do
+        access_password :string, "Access Password", example: "12345678"
+        access_password_repeat :string, "Access Password Repeat", example: "12345678"
+      end
+      CumbucaWeb.Response.swagger 200, data: "access_password_updated"
+    ---| end |---
+  """
+  def patch_access_password(conn, params) do
+    params
+    |> Map.put("authed", Auth.get_user(conn))
+    |> Map.put("permission", Auth.get_permission(conn))
+    |> AccountContext.patch_access_password()
+    |> Response.pipe(conn)
+  end
+
+  @doc """
+    Update transaction password
+
+    ---| swagger |---
+      tag "accounts"
+      patch "/api/accounts/{account_id}/transaction-password"
+      consumes "application/json"
+      produces "application/json"
+      parameter "authorization", :header, :string, "Access Token"
+      parameters do
+        account_id :path, :string, "Account id", required: true
+      end
+      request_body do
+        transaction_password :string, "Transaction Password", example: "12345678"
+        transaction_password_repeat :string, "Transaction Password Repeat", example: "12345678"
+      end
+      CumbucaWeb.Response.swagger 200, data: "transaction_password_updated"
+    ---| end |---
+  """
+  def patch_transaction_password(conn, params) do
+    params
+    |> Map.put("authed", Auth.get_user(conn))
+    |> Map.put("permission", Auth.get_permission(conn))
+    |> AccountContext.patch_transaction_password()
     |> Response.pipe(conn)
   end
 
@@ -72,7 +125,7 @@ defmodule CumbucaWeb.AccountsController do
     params
     |> Map.put("authed", Auth.get_user(conn))
     |> Map.put("permission", Auth.get_permission(conn))
-    |> AccountsContext.all()
+    |> AccountContext.all()
     |> Response.pipe(conn)
   end
 
@@ -94,7 +147,7 @@ defmodule CumbucaWeb.AccountsController do
     params
     |> Map.put("authed", Auth.get_user(conn))
     |> Map.put("permission", Auth.get_permission(conn))
-    |> AccountsContext.one()
+    |> AccountContext.one()
     |> Response.pipe(conn)
   end
 
@@ -116,7 +169,7 @@ defmodule CumbucaWeb.AccountsController do
     params
     |> Map.put("authed", Auth.get_user(conn))
     |> Map.put("permission", Auth.get_permission(conn))
-    |> AccountsContext.delete()
+    |> AccountContext.delete()
     |> Response.pipe(conn)
   end
 end
