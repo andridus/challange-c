@@ -6,11 +6,12 @@ Desafio aceito: [link para o desafio](https://github.com/appcumbuca/desafios/blo
 - [x] Cadastro de conta
 - [x] Atualização de senha de acessoa a conta
 - [x] Autenticação
-- [ ] Atualização de senha de transacao da conta
-- [ ] Cadastro de Transação
-- [ ] Estorno de Transação
-- [ ] Busca de Transações por data
+- [x] Atualização de senha de transacao da conta
+- [x] Cadastro de Transação
+- [x] Cancelamento de Transação Pendente
+- [x] Busca de Transações por data
 - [ ] Visualização de Saldo
+- [ ] Estorno de Transação
 
 ## Regras de Negócio
 - [ ] Não deve ser possível forjar um token de autenticação. Os tokens devem identificar de forma única o usuário logado.

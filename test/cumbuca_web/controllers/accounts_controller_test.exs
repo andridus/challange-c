@@ -297,14 +297,25 @@ defmodule CumbucaWeb.AccountsControllerTest do
                  "id" => _,
                  "first_name" => "Joe",
                  "last_name" => "Doe",
-                 "status" => "INACTIVE",
+                 "status" => "CLOSED",
                  "inserted_at" => _,
                  "updated_at" => _
                }
              } = response
 
       response = get(authed_conn(account), ~p"/api/accounts/#{id}") |> get_resp_body()
-      assert %{"message" => "account_not_found"} = response
+
+      assert %{
+               "data" => %{
+                 "active?" => false,
+                 "id" => _,
+                 "first_name" => "Joe",
+                 "last_name" => "Doe",
+                 "status" => "CLOSED",
+                 "inserted_at" => _,
+                 "updated_at" => _
+               }
+             } = response
     end
 
     test "PATCH /api/accounts/{account_id}/access-password - creates a access password" do
@@ -467,8 +478,34 @@ defmodule CumbucaWeb.AccountsControllerTest do
       assert %{"message" => "param_transaction_password_not_found"} = response
     end
 
-    ## TODO: Test for deactivate account
-    ## TODO: Test to close account
-    ## TODO: Test to cant delete account, but set CLOSED
+    test "PUT /api/accounts/{account_id}/consolidations" do
+      params0 = %{
+        first_name: "Joe",
+        last_name: "Doe",
+        cpf: Brcpfcnpj.cpf_generate(),
+        balance: 10_00
+      }
+
+      assert %{"data" => %{"id" => id} = account} =
+               post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
+
+      query_params =
+        %{
+          from: Date.utc_today() |> Date.add(-2),
+          to: Date.utc_today() |> Date.add(-1)
+        }
+        |> URI.encode_query()
+
+      response =
+        get(authed_conn(account), "/api/accounts/#{id}/consolidations?#{query_params}")
+        |> get_resp_body()
+
+      assert %{"data" => []} = response
+
+      response =
+        get(authed_conn(account), "/api/accounts/#{id}/consolidations") |> get_resp_body()
+
+      assert %{"data" => [%{"id" => _id, "amount" => 10_00, "operation" => "CREDIT"}]} = response
+    end
   end
 end

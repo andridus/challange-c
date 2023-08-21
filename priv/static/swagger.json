@@ -529,6 +529,114 @@
         ]
       }
     },
+    "/api/accounts/{account_id}/consolidations": {
+      "get": {
+        "description": "Get consolidations from account",
+        "operationId": "CumbucaWeb.AccountsController.all_consolidations",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Account id",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Date from",
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "type": "date"
+          },
+          {
+            "description": "Date to",
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "type": "date"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": [
+                    {
+                      "description": "fields available for `ACCOUNT_OWNER` permission",
+                      "example": {
+                        "amount": 10000,
+                        "operation": "DEBIT",
+                        "refunded?": true,
+                        "refunded_at": "2023-08-21T22:13:03Z"
+                      },
+                      "properties": {
+                        "amount": {
+                          "description": "amount",
+                          "example": 10000,
+                          "type": "integer"
+                        },
+                        "inserted_at": {
+                          "type": "utc_datetime"
+                        },
+                        "operation": {
+                          "description": "operation of this transaction",
+                          "enum": [
+                            "DEBIT",
+                            "CREDIT"
+                          ],
+                          "example": "DEBIT",
+                          "type": "Elixir.Ecto.Enum"
+                        },
+                        "payed_to": {
+                          "type": "binary_id"
+                        },
+                        "received_from": {
+                          "type": "binary_id"
+                        },
+                        "refunded?": {
+                          "description": "flag to mark if was refunded",
+                          "example": true,
+                          "type": "boolean"
+                        },
+                        "refunded_at": {
+                          "description": "DateTime when the transaction was refunded",
+                          "example": "2023-08-21T22:13:03Z",
+                          "type": "utc_datetime"
+                        },
+                        "updated_at": {
+                          "type": "utc_datetime"
+                        }
+                      },
+                      "required": [],
+                      "title": "Consolidated Transaction Entity",
+                      "type": "object"
+                    }
+                  ],
+                  "type": "array"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Get consolidations from account",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/api/accounts/{account_id}/transaction-password": {
       "patch": {
         "consumes": [
@@ -711,12 +819,12 @@
                   },
                   "payer_id": {
                     "description": "Id of payer account",
-                    "example": "4b8d36c6-2870-4045-952b-223d1c29435b",
+                    "example": "f6fb213a-1515-476a-8258-9501453965e0",
                     "type": "uuid"
                   },
                   "receiver_id": {
                     "description": "Id of receiver account",
-                    "example": "cd741bc1-b34a-4885-b9aa-41b622d767ab",
+                    "example": "02eb2088-25c7-4adb-a445-1cd5e19d122b",
                     "type": "uuid"
                   }
                 }
@@ -732,7 +840,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-21T18:03:45Z",
+                    "completed_at": "2023-08-21T22:13:03Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -743,7 +851,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-21T18:03:45Z",
+                      "example": "2023-08-21T22:13:03Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -810,7 +918,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-21T18:03:45Z",
+                    "completed_at": "2023-08-21T22:13:03Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -821,7 +929,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-21T18:03:45Z",
+                      "example": "2023-08-21T22:13:03Z",
                       "type": "utc_datetime"
                     },
                     "status": {

@@ -3,6 +3,7 @@ defmodule CumbucaWeb.Response do
     Cieb.Reponse
   """
 
+  alias Cumbuca.Utils, as: CumbucaUtils
   alias CumbucaWeb.StatusMessage
   alias Phoenix.Controller
   alias Plug.Conn.Utils
@@ -15,7 +16,7 @@ defmodule CumbucaWeb.Response do
   def error(message, conn, status \\ 422)
 
   def error(%Ecto.Changeset{} = changeset, conn, _status) do
-    data0 = parse_changeset(changeset)
+    data0 = CumbucaUtils.parse_changeset(changeset)
     data = %{details: data0, message: :form_error, status: 422}
 
     conn
@@ -117,24 +118,6 @@ defmodule CumbucaWeb.Response do
       _ -> "__unnamed__"
     end
   end
-
-  defp parse_changeset(changeset),
-    do: parse_changeset_error(changeset) |> List.flatten() |> Map.new()
-
-  defp parse_changeset_error(%Ecto.Changeset{changes: changes, errors: errors}) do
-    changes =
-      changes
-      |> Enum.map(fn {_key, value} -> parse_changeset_error(value) end)
-      |> List.flatten()
-
-    errors =
-      errors
-      |> Enum.map(fn {key, {value, _}} -> {key, value} end)
-
-    List.flatten(errors ++ changes)
-  end
-
-  defp parse_changeset_error(_), do: []
 
   defp parse_with_schema(status, message, data) when status in 200..299 do
     message = message || StatusMessage.from_status(status)

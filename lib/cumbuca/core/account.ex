@@ -53,6 +53,12 @@ defmodule Cumbuca.Core.Account do
           example: Utils.dateime_to_iso8601()
         ]
 
+      field :closed_at, :utc_datetime,
+        __swagger__: [
+          description: "DateTime when account access was closed",
+          example: Utils.dateime_to_iso8601()
+        ]
+
       field :closed?, :boolean,
         default: false,
         __swagger__: [description: "closed account?", example: true]
@@ -182,6 +188,8 @@ defmodule Cumbuca.Core.Account do
     model
     |> cast(attrs, [])
     |> validate_zeroed_account()
+    |> put_change(:closed_at, Utils.now_sec())
+    |> put_change(:closed?, true)
   end
 
   defp validate_zeroed_account(changeset) do
@@ -219,6 +227,7 @@ defmodule Cumbuca.Core.Account do
     access_password_hash = get_field(changeset, :access_password_hash)
     transaction_password_hash = get_field(changeset, :transaction_password_hash)
     is_active = get_field(changeset, :active?)
+
     cond do
       is_active == true -> changeset
       !is_nil(access_password_hash) -> put_change(changeset, :active?, true)
@@ -226,6 +235,7 @@ defmodule Cumbuca.Core.Account do
       :else -> changeset
     end
   end
+
   defp put_status(changeset) do
     is_active = get_field(changeset, :active?)
     is_closed = get_field(changeset, :closed?)
@@ -248,23 +258,46 @@ defmodule Cumbuca.Core.Account do
 
     # The bee api provides default functions to realize entity crud without Ecto verbosity
     use Bee.Api
+    alias Cumbuca.Core.Consolidation
 
     def check_access_password(%{access_password_hash: nil}, _access_password), do: false
+
     def check_access_password(%{access_password_hash: hashed_password}, access_password) do
       Bcrypt.verify_pass(access_password, hashed_password)
     end
 
     def check_transaction_password(%{transaction_password_hash: nil}, _access_password), do: false
+
     def check_transaction_password(
           %{transaction_password_hash: hashed_password},
           transaction_password
         ) do
-        Base.decode64!(hashed_password) == transaction_password
+      Base.decode64!(hashed_password) == transaction_password
     end
 
     def get_balance(%{id: id}) do
       {:ok, %{initial_balance: initial_balance}} = get(id)
-      initial_balance
+      from_consolidation = balance_from_consolidation(id)
+      initial_balance + from_consolidation
+    end
+
+    defp balance_from_consolidation(account_id) do
+      from(c in Consolidation,
+        where:
+          c.account_id == ^account_id and
+            c.refunded? == false,
+        select:
+          coalesce(
+            fragment(
+              "sum(CASE ? WHEN 'CREDIT' THEN ? WHEN 'DEBIT' THEN -? ELSE 0 END)",
+              c.operation,
+              c.amount,
+              c.amount
+            ),
+            0
+          )
+      )
+      |> repo().one()
     end
 
     def has_balance_for_amount(amount, account_id) when is_bitstring(account_id),

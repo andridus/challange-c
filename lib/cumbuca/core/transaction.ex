@@ -7,9 +7,18 @@ defmodule Cumbuca.Core.Transaction do
   alias Cumbuca.Core.Account
   alias Cumbuca.Utils
   use Cumbuca.Schema
-  @basic_fields [ :id, :amount, :status, :completed_at ]
-  @admin [ :payer_id, :receiver_id, :processing_at, :error_at, :refund?, :error?, :error_reason,
-    :inserted_at, :updated_at]
+  @basic_fields [:id, :amount, :status, :completed_at]
+  @admin [
+    :payer_id,
+    :receiver_id,
+    :processing_at,
+    :error_at,
+    :refund?,
+    :error?,
+    :error_reason,
+    :inserted_at,
+    :updated_at
+  ]
 
   @transaction_status [:PENDING, :PROCESSING, :COMPLETED, :CANCELED, :ERROR]
 
@@ -22,10 +31,13 @@ defmodule Cumbuca.Core.Transaction do
       field :status, Ecto.Enum,
         values: @transaction_status,
         default: :PENDING,
-        __swagger__: [description: "status of transaction", example: "PENDING", enum: @transaction_status]
+        __swagger__: [
+          description: "status of transaction",
+          example: "PENDING",
+          enum: @transaction_status
+        ]
 
-      field :amount, :integer,
-        __swagger__: [description: "amount", example: 10_000]
+      field :amount, :integer, __swagger__: [description: "amount", example: 10_000]
 
       field :refund?, :boolean,
         __swagger__: [description: "flag to mark if was refund referenced", example: true]
@@ -44,16 +56,19 @@ defmodule Cumbuca.Core.Transaction do
           description: "DateTime when the transaction was completed",
           example: Utils.dateime_to_iso8601()
         ]
+
       field :processing_at, :utc_datetime,
         __swagger__: [
           description: "DateTime when the processing transaction was started",
           example: Utils.dateime_to_iso8601()
         ]
+
       field :error_at, :utc_datetime,
         __swagger__: [
           description: "DateTime when the error occurs",
           example: Utils.dateime_to_iso8601()
         ]
+
       # -- virtual fields
       field :__action__, Ecto.Enum,
         values: [
@@ -129,27 +144,33 @@ defmodule Cumbuca.Core.Transaction do
 
   defp cancel_action(model, attrs) do
     fields = [:status, :canceled?]
+
     model
     |> cast(attrs, fields)
     |> put_canceled()
   end
 
   defp error_action(model, attrs) do
+    fields = [:reason]
+
     model
-    |> cast(attrs, [])
+    |> cast(attrs, fields)
+    |> validate_required(fields)
     |> put_change(:error_at, Utils.now_sec())
     |> put_change(:error?, true)
     |> put_change(:status, :ERROR)
   end
 
-  def validate_unique_transaction(changeset) do
-    ## TODO: validade unique transation
+  defp validate_unique_transaction(changeset) do
+    ## TODO: validade unique transation (idempotency key)
     changeset
   end
-  def has_sufficient_balance(changeset) do
+
+  defp has_sufficient_balance(changeset) do
     amount = get_field(changeset, :amount)
     payer_id = get_field(changeset, :payer_id)
     has_balance = Account.Api.has_balance_for_amount(amount, payer_id)
+
     if has_balance do
       changeset
     else
@@ -159,11 +180,13 @@ defmodule Cumbuca.Core.Transaction do
 
   defp put_canceled(changeset) do
     status = get_field(changeset, :status)
+
     cond do
       status == :PENDING ->
         changeset
         |> put_change(:canceled?, true)
         |> put_change(:status, :CANCELED)
+
       :else ->
         changeset
         |> add_error(:status, "only cancel when PENDING status")

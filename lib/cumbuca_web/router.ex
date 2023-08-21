@@ -48,7 +48,9 @@ defmodule CumbucaWeb.Router do
       pipe_through [:authed]
       get "/accounts", AccountsController, :all
       get "/accounts/:account_id", AccountsController, :one
+      get "/accounts/:account_id/consolidations", AccountsController, :all_consolidations
       put "/accounts/:account_id", AccountsController, :update
+
       patch "/accounts/:account_id/transaction-password",
             AccountsController,
             :patch_transaction_password

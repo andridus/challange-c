@@ -41,4 +41,50 @@ defmodule Cumbuca.Utils do
   def remove_nil_fields(params) do
     for({key, value} <- params, !is_nil(value) && value != "nil", into: %{}, do: {key, value})
   end
+
+  @doc """
+    Parse changeset error to string
+  """
+  def parse_changeset_string(changeset, label \\ []) do
+    message = fn x ->
+      [label, to_string(elem(x, 1))]
+      |> List.flatten()
+      |> Enum.join(": ")
+    end
+
+    parse_changeset(changeset)
+    |> Enum.map_join(";", &message.(&1))
+  end
+
+  @doc """
+    Parse changeset error
+  """
+  def parse_changeset(changeset),
+    do: parse_changeset_error(changeset) |> List.flatten() |> Map.new()
+
+  defp parse_changeset_error(%Ecto.Changeset{changes: changes, errors: errors}) do
+    changes =
+      changes
+      |> Enum.map(fn {_key, value} -> parse_changeset_error(value) end)
+      |> List.flatten()
+
+    errors =
+      errors
+      |> Enum.map(fn {key, {value, _}} -> {key, value} end)
+
+    List.flatten(errors ++ changes)
+  end
+
+  defp parse_changeset_error(_), do: []
+
+  @doc """
+    Parse string to date
+  """
+  def parse_to_date(nil), do: nil
+
+  def parse_to_date(txt) when is_bitstring(txt) do
+    Date.from_iso8601!(txt)
+  rescue
+    _ -> nil
+  end
 end

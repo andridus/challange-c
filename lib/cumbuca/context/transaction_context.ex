@@ -24,7 +24,8 @@ defmodule Cumbuca.TransactionContext do
       @param_payer_id {:ok, payer_id} = Utils.get_param(params, "payer_id")
       @param_receiver_id {:ok, receiver_id} = Utils.get_param(params, "receiver_id")
       @param_amount {:ok, amount} = Utils.get_param(params, "amount")
-      @param_transaction_password {:ok, transaction_password} = Utils.get_param(params, "transaction_password")
+      @param_transaction_password {:ok, transaction_password} =
+                                    Utils.get_param(params, "transaction_password")
 
       @active_payer_account {:ok, %{active?: true} = payer} = Account.Api.get(payer_id)
       @active_receive_account {:ok, %{active?: true}} = Account.Api.get(receiver_id)
@@ -70,7 +71,8 @@ defmodule Cumbuca.TransactionContext do
     happy_path do
       # required params
       @param_transaction_id {:ok, transaction_id} = Utils.get_param(params, "transaction_id")
-      @transaction {:ok, %{payer_id: payer_id} = transaction} = Transaction.Api.get(transaction_id)
+      @transaction {:ok, %{payer_id: payer_id} = transaction} =
+                     Transaction.Api.get(transaction_id)
 
       @active_payer_account {:ok, %{active?: true}} = Account.Api.get(payer_id)
 
@@ -78,9 +80,12 @@ defmodule Cumbuca.TransactionContext do
       @granted_payer true = authed.id == payer_id
 
       update_params = %{id: transaction_id, __action__: :CANCEL}
+
       Transaction.Api.update(update_params)
       |> Utils.visible_fields(permission)
     else
+      {:active_payer_account, {:error, :not_found}} -> {:error, "payer_account_not_found"}
+      {:active_payer_account, _} -> {:error, "payer_account_not_available"}
       {:granted_payer, false} -> {:error, "operation_not_allowed_for_this_user"}
       {atom, :error} -> {:error, "#{atom}_not_found"}
       {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}

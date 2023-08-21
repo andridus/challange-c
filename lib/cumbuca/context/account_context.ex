@@ -2,8 +2,8 @@ defmodule Cumbuca.AccountContext do
   @moduledoc """
     Context of account functions
   """
-  alias Cumbuca.Core.Account
-  alias Cumbuca.Utils
+  alias Cumbuca.Core.{Account, Consolidation}
+  alias Cumbuca.{Repo, Utils}
   import Happy
 
   @doc """
@@ -35,12 +35,36 @@ defmodule Cumbuca.AccountContext do
         __action__: :CREATE
       }
 
-      Account.Api.insert(insert_params)
+      Repo.transaction(fn -> commit_account_creation(insert_params) end)
       |> Utils.visible_fields(permission)
     else
       {atom, :error} -> {:error, "#{atom}_not_found"}
       {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
       {_atom, error} -> {:error, error}
+    end
+  end
+
+  defp commit_account_creation(params) do
+    happy_path do
+      @account {:ok, account} = Account.Api.insert(params)
+      credit_params = %{
+        account_id: account.id,
+        description: "RECEBIMENTO INICIAL",
+        amount: account.initial_balance,
+        __action__: :CREDIT
+      }
+
+      @consolidate {:ok, _consolidate} = if(account.initial_balance == 0) do
+        {:ok, :nothing}
+      else
+        Consolidation.Api.insert(credit_params)
+      end
+      account
+    else
+      {atom, :error} -> Repo.rollback("#{atom}_not_found")
+      {_atom, {:error, error}} when is_map(error) -> Repo.rollback(error)
+      {atom, {:error, error}} -> Repo.rollback("#{atom}_#{error}")
+      {_atom, error} -> Repo.rollback(error)
     end
   end
 
@@ -225,7 +249,8 @@ defmodule Cumbuca.AccountContext do
       # required params
       @param_account_id {:ok, account_id} = Utils.get_param(params, "account_id")
       @account {:ok, account} = Account.Api.get(account_id)
-      Account.Api.delete(account)
+
+      Account.Api.update(%{id: account.id, __action__: :CLOSE})
       |> Utils.visible_fields(permission)
     else
       {atom, :error} -> {:error, "#{atom}_not_found"}
