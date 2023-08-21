@@ -237,10 +237,12 @@ defmodule Cumbuca.Core.Account do
     # The bee api provides default functions to realize entity crud without Ecto verbosity
     use Bee.Api
 
+    def check_access_password(%{access_password_hash: nil}, access_password), do: false
     def check_access_password(%{access_password_hash: hashed_password}, access_password) do
       Bcrypt.verify_pass(access_password, hashed_password)
     end
 
+    def check_transaction_password(%{transaction_password_hash: nil}, access_password), do: false
     def check_transaction_password(
           %{transaction_password_hash: hashed_password},
           transaction_password

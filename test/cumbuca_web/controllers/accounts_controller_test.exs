@@ -277,7 +277,7 @@ defmodule CumbucaWeb.AccountsControllerTest do
                put(authed_conn(account), ~p"/api/accounts/#{id}", params0) |> get_resp_body()
     end
 
-    test "DELETE /api/accounts - show all accounts" do
+    test "DELETE /api/accounts/{id}" do
       # First account
       params0 = %{
         first_name: "Joe",
@@ -315,7 +315,7 @@ defmodule CumbucaWeb.AccountsControllerTest do
         balance: 0
       }
 
-      assert %{"data" => %{"id" => id} = account} =
+      assert %{"data" => %{"id" => id}} =
                post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
 
       # Update password
@@ -325,7 +325,7 @@ defmodule CumbucaWeb.AccountsControllerTest do
       }
 
       response =
-        patch(authed_conn(account), ~p"/api/accounts/#{id}/access-password", params1)
+        patch(anonymous_conn(), ~p"/api/accounts/#{id}/access-password", params1)
         |> get_resp_body()
 
       assert %{"data" => "access_password_updated"} = response

@@ -42,14 +42,13 @@ defmodule CumbucaWeb.Router do
 
     ## account
     post "/accounts", AccountsController, :create
+    patch "/accounts/:account_id/access-password", AccountsController, :patch_access_password
 
     scope "/" do
       pipe_through [:authed]
       get "/accounts", AccountsController, :all
       get "/accounts/:account_id", AccountsController, :one
       put "/accounts/:account_id", AccountsController, :update
-      patch "/accounts/:account_id/access-password", AccountsController, :patch_access_password
-
       patch "/accounts/:account_id/transaction-password",
             AccountsController,
             :patch_transaction_password
