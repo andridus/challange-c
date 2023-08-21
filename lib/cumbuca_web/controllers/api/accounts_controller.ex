@@ -183,8 +183,8 @@ defmodule CumbucaWeb.AccountsController do
       parameter "authorization", :header, :string, "Access Token"
       parameters do
         account_id :path, :string, "Account id", required: true
-        from :query, :date, "Date from"
-        to :query, :date, "Date to"
+        from :query, :date, "Date from", example: "2023-08-20"
+        to :query, :date, "Date to", example: "2023-08-21"
       end
       CumbucaWeb.Response.swagger 200, data: [Cumbuca.Core.Consolidation._swagger_schema_(:account_owner)]
     ---| end |---

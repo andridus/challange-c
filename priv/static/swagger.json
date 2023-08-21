@@ -553,14 +553,16 @@
             "in": "query",
             "name": "from",
             "required": false,
-            "type": "date"
+            "type": "date",
+            "x-example": "2023-08-20"
           },
           {
             "description": "Date to",
             "in": "query",
             "name": "to",
             "required": false,
-            "type": "date"
+            "type": "date",
+            "x-example": "2023-08-21"
           }
         ],
         "produces": [
@@ -579,7 +581,7 @@
                         "amount": 10000,
                         "operation": "DEBIT",
                         "refunded?": true,
-                        "refunded_at": "2023-08-21T22:13:03Z"
+                        "refunded_at": "2023-08-21T22:18:41Z"
                       },
                       "properties": {
                         "amount": {
@@ -612,7 +614,7 @@
                         },
                         "refunded_at": {
                           "description": "DateTime when the transaction was refunded",
-                          "example": "2023-08-21T22:13:03Z",
+                          "example": "2023-08-21T22:18:41Z",
                           "type": "utc_datetime"
                         },
                         "updated_at": {
@@ -819,12 +821,12 @@
                   },
                   "payer_id": {
                     "description": "Id of payer account",
-                    "example": "f6fb213a-1515-476a-8258-9501453965e0",
+                    "example": "53b1ef76-2141-42c4-a212-5f219e04e484",
                     "type": "uuid"
                   },
                   "receiver_id": {
                     "description": "Id of receiver account",
-                    "example": "02eb2088-25c7-4adb-a445-1cd5e19d122b",
+                    "example": "2e5b0b46-6959-445d-8902-c0ba7778ce77",
                     "type": "uuid"
                   }
                 }
@@ -840,7 +842,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-21T22:13:03Z",
+                    "completed_at": "2023-08-21T22:18:41Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -851,7 +853,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-21T22:13:03Z",
+                      "example": "2023-08-21T22:18:41Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -918,7 +920,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-21T22:13:03Z",
+                    "completed_at": "2023-08-21T22:18:41Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -929,7 +931,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-21T22:13:03Z",
+                      "example": "2023-08-21T22:18:41Z",
                       "type": "utc_datetime"
                     },
                     "status": {

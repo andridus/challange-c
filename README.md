@@ -4,9 +4,9 @@ Desafio aceito: [link para o desafio](https://github.com/appcumbuca/desafios/blo
 
 ## Checklist
 - [x] Cadastro de conta
-- [x] Atualização de senha de acessoa a conta
+- [x] Atualização de senha de acesso a conta
 - [x] Autenticação
-- [x] Atualização de senha de transacao da conta
+- [x] Atualização de senha de transação da conta
 - [x] Cadastro de Transação
 - [x] Cancelamento de Transação Pendente
 - [x] Busca de Transações por data
@@ -57,6 +57,6 @@ Para acessar o swagger navegue até:
 | autenticação de usuário
 
 
-## Coisas a fazer
+## Talvez Coisas a fazer
  - [ ] swagger devolver lista de objetos na resposta
  - [ ] swagger oneOf para as permissões
