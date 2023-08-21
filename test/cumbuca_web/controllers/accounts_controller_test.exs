@@ -330,7 +330,8 @@ defmodule CumbucaWeb.AccountsControllerTest do
 
       assert %{"data" => "access_password_updated"} = response
 
-      {:ok, %{access_password_hash: hash}} = Account.Api.get(id)
+      # Check account was activated
+      {:ok, %{access_password_hash: hash, active?: true}} = Account.Api.get(id)
       refute is_nil(hash)
     end
 
@@ -403,7 +404,7 @@ defmodule CumbucaWeb.AccountsControllerTest do
 
       assert %{"data" => "transaction_password_updated"} = response
 
-      {:ok, %{transaction_password_hash: hash}} = Account.Api.get(id)
+      {:ok, %{transaction_password_hash: hash, active?: true}} = Account.Api.get(id)
       refute is_nil(hash)
       assert {:ok, "1234"} = Base.decode64(hash)
     end

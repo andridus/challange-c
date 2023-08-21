@@ -680,6 +680,179 @@
         ]
       }
     },
+    "/api/transactions": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Create transaction",
+        "operationId": "CumbucaWeb.TransactionsController.create",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "amount": {
+                    "description": "Amount to transfer",
+                    "example": 1000,
+                    "type": "integer"
+                  },
+                  "payer_id": {
+                    "description": "Id of payer account",
+                    "example": "4b8d36c6-2870-4045-952b-223d1c29435b",
+                    "type": "uuid"
+                  },
+                  "receiver_id": {
+                    "description": "Id of receiver account",
+                    "example": "cd741bc1-b34a-4885-b9aa-41b622d767ab",
+                    "type": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "fields available for `BASIC` permission",
+                  "example": {
+                    "amount": 10000,
+                    "completed_at": "2023-08-21T18:03:45Z",
+                    "status": "PENDING"
+                  },
+                  "properties": {
+                    "amount": {
+                      "description": "amount",
+                      "example": 10000,
+                      "type": "integer"
+                    },
+                    "completed_at": {
+                      "description": "DateTime when the transaction was completed",
+                      "example": "2023-08-21T18:03:45Z",
+                      "type": "utc_datetime"
+                    },
+                    "status": {
+                      "default": "PENDING",
+                      "description": "status of transaction",
+                      "enum": [
+                        "PENDING",
+                        "PROCESSING",
+                        "COMPLETED",
+                        "CANCELED",
+                        "ERROR"
+                      ],
+                      "example": "PENDING",
+                      "type": "Elixir.Ecto.Enum"
+                    }
+                  },
+                  "required": [],
+                  "title": "Transaction Entity",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Create transaction",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{transaction_id}/cancel": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Cancel pending transaction",
+        "operationId": "CumbucaWeb.TransactionsController.cancel",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Transaction id",
+            "in": "path",
+            "name": "transaction_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "fields available for `BASIC` permission",
+                  "example": {
+                    "amount": 10000,
+                    "completed_at": "2023-08-21T18:03:45Z",
+                    "status": "PENDING"
+                  },
+                  "properties": {
+                    "amount": {
+                      "description": "amount",
+                      "example": 10000,
+                      "type": "integer"
+                    },
+                    "completed_at": {
+                      "description": "DateTime when the transaction was completed",
+                      "example": "2023-08-21T18:03:45Z",
+                      "type": "utc_datetime"
+                    },
+                    "status": {
+                      "default": "PENDING",
+                      "description": "status of transaction",
+                      "enum": [
+                        "PENDING",
+                        "PROCESSING",
+                        "COMPLETED",
+                        "CANCELED",
+                        "ERROR"
+                      ],
+                      "example": "PENDING",
+                      "type": "Elixir.Ecto.Enum"
+                    }
+                  },
+                  "required": [],
+                  "title": "Transaction Entity",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Cancel pending transaction",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
     "/home": {
       "get": {
         "description": "Home page",

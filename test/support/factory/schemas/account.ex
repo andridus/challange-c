@@ -39,7 +39,8 @@ defmodule Factory.Account do
     Update access password
   """
   def set_access_password(map \\ %{}, password, opts \\ []) do
-    account_id = B.get_id(map, :account)
+    tag = opts[:tag] || :account
+    account_id = B.get_id(map, tag)
 
     {:ok, _account} =
       %{
@@ -58,7 +59,8 @@ defmodule Factory.Account do
     Update transaction password
   """
   def set_transaction_password(map \\ %{}, password, opts \\ []) do
-    account_id = B.get_id(map, :account)
+    tag = opts[:tag] || :account
+    account_id = B.get_id(map, tag)
 
     {:ok, _account} =
       %{

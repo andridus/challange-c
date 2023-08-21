@@ -110,6 +110,7 @@ defmodule Cumbuca.Core.Account do
     do:
       model
       |> run_action(attrs)
+      |> put_active()
       |> put_status()
 
   def run_action(model, %{__action__: :CREATE} = attr), do: create_action(model, attr)
@@ -214,6 +215,17 @@ defmodule Cumbuca.Core.Account do
     end
   end
 
+  defp put_active(changeset) do
+    access_password_hash = get_field(changeset, :access_password_hash)
+    transaction_password_hash = get_field(changeset, :transaction_password_hash)
+    is_active = get_field(changeset, :active?)
+    cond do
+      is_active == true -> changeset
+      !is_nil(access_password_hash) -> put_change(changeset, :active?, true)
+      !is_nil(transaction_password_hash) -> put_change(changeset, :active?, true)
+      :else -> changeset
+    end
+  end
   defp put_status(changeset) do
     is_active = get_field(changeset, :active?)
     is_closed = get_field(changeset, :closed?)
@@ -237,23 +249,30 @@ defmodule Cumbuca.Core.Account do
     # The bee api provides default functions to realize entity crud without Ecto verbosity
     use Bee.Api
 
-    def check_access_password(%{access_password_hash: nil}, access_password), do: false
+    def check_access_password(%{access_password_hash: nil}, _access_password), do: false
     def check_access_password(%{access_password_hash: hashed_password}, access_password) do
       Bcrypt.verify_pass(access_password, hashed_password)
     end
 
-    def check_transaction_password(%{transaction_password_hash: nil}, access_password), do: false
+    def check_transaction_password(%{transaction_password_hash: nil}, _access_password), do: false
     def check_transaction_password(
           %{transaction_password_hash: hashed_password},
           transaction_password
         ) do
-      ## TODO: validate transaction password
-      :ok
+        Base.decode64!(hashed_password) == transaction_password
     end
 
-    def get_balance(_account) do
-      ## TODO: get account balance
-      0
+    def get_balance(%{id: id}) do
+      {:ok, %{initial_balance: initial_balance}} = get(id)
+      initial_balance
+    end
+
+    def has_balance_for_amount(amount, account_id) when is_bitstring(account_id),
+      do: has_balance_for_amount(amount, %{id: account_id})
+
+    def has_balance_for_amount(amount, account) do
+      balance = get_balance(account)
+      amount <= balance
     end
 
     def reached_max_attempts_access?(account) do

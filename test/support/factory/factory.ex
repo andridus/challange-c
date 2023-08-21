@@ -14,7 +14,7 @@ defmodule Factory do
       first_name: "Joe-" <> Bee.unique(10),
       last_name: "Doe-" <> Bee.unique(10),
       cpf: Brcpfcnpj.cpf_generate(),
-      balance: 0
+      initial_balance: 0
     }
     |> merge_attributes(attrs, Account, opts)
   end

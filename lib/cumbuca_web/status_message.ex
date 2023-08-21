@@ -21,7 +21,10 @@ defmodule CumbucaWeb.StatusMessage do
     {400, :password_dont_match},
     {400, :password_length_should_be_four},
     ## auth
-    {400, :cpf_or_password_invalid}
+    {400, :cpf_or_password_invalid},
+    ## transaction
+    {400, :invalid_password},
+    {400, :operation_not_allowed_for_this_user}
   ]
   def from_message("param_" <> _key), do: 400
 

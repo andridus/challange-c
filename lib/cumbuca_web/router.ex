@@ -55,6 +55,14 @@ defmodule CumbucaWeb.Router do
 
       delete "/accounts/:account_id", AccountsController, :delete
     end
+
+    ## transactions
+    scope "/" do
+      pipe_through [:authed]
+
+      post "/transactions", TransactionsController, :create
+      post "/transactions/:transaction_id/cancel", TransactionsController, :cancel
+    end
   end
 
   def swagger_info do
