@@ -69,6 +69,10 @@ defmodule CumbucaWeb.Router do
     end
   end
 
+  scope "/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :cumbuca, swagger_file: "swagger.json"
+  end
+
   def swagger_info do
     %{
       info: %{
@@ -92,10 +96,6 @@ defmodule CumbucaWeb.Router do
 
       live_dashboard "/dashboard", metrics: CumbucaWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
-
-    scope "/swagger" do
-      forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :cumbuca, swagger_file: "swagger.json"
     end
   end
 end
