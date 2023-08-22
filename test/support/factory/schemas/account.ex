@@ -66,7 +66,7 @@ defmodule Factory.Account do
       %{
         "account_id" => account_id,
         "permission" => :admin,
-        "authed" => nil,
+        "authed" => %{id: account_id},
         "transaction_password" => password,
         "repeat_transaction_password" => password
       }

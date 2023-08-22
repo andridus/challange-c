@@ -6,12 +6,13 @@ defmodule Cumbuca.Core.Account do
   """
   alias Cumbuca.Utils
   use Cumbuca.Schema
-  @basic_fields [:id, :first_name, :last_name, :active?, :status, :inserted_at, :updated_at]
+  @basic_fields [:id, :first_name, :cpf, :last_name, :active?, :status, :inserted_at, :updated_at]
   @owner_fields [
     :access_blocked,
     :access_blocked_at,
     :attempts_access,
     :closed?,
+    :closed_at,
     :deactivated_at,
     :initial_balance
   ]
@@ -276,16 +277,12 @@ defmodule Cumbuca.Core.Account do
     end
 
     def get_balance(%{id: id}) do
-      {:ok, %{initial_balance: initial_balance}} = get(id)
-      from_consolidation = balance_from_consolidation(id)
-      initial_balance + from_consolidation
+      balance_from_consolidation(id)
     end
 
     defp balance_from_consolidation(account_id) do
       from(c in Consolidation,
-        where:
-          c.account_id == ^account_id and
-            c.refunded? == false,
+        where: c.account_id == ^account_id,
         select:
           coalesce(
             fragment(

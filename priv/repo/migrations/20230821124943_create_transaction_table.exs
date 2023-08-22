@@ -8,7 +8,8 @@ defmodule Cumbuca.Repo.Migrations.CreateTransactionTable do
       add :completed_at, :utc_datetime
       add :processing_at, :utc_datetime
       add :error_at, :utc_datetime
-      add :refund?, :boolean, default: false, null: false
+      add :refunded?, :boolean, default: false, null: false
+      add :from_refund?, :boolean, default: false, null: false
       add :canceled?, :boolean, default: false, null: false
       add :error?, :boolean, default: false, null: false
       add :reason, :string

@@ -65,7 +65,6 @@ defmodule CumbucaWeb.AccountsControllerTest do
       refute account_fields["__transaction_password__"]
 
       ## shouldn't be public fields
-      refute account_fields["cpf"]
       refute account_fields["access_blocked?"]
       refute account_fields["access_blocked_at"]
       refute account_fields["attempts_access"]
@@ -143,7 +142,6 @@ defmodule CumbucaWeb.AccountsControllerTest do
       assert %{"data" => [one | _] = data} = response
       assert 2 = Enum.count(data)
       ## shouldn't be public fields
-      refute one["cpf"]
       refute one["access_blocked?"]
       refute one["access_blocked_at"]
       refute one["attempts_access"]
@@ -183,7 +181,6 @@ defmodule CumbucaWeb.AccountsControllerTest do
              } = response
 
       ## shouldn't be public fields
-      refute account["cpf"]
       refute account["access_blocked?"]
       refute account["access_blocked_at"]
       refute account["attempts_access"]
@@ -507,5 +504,23 @@ defmodule CumbucaWeb.AccountsControllerTest do
 
       assert %{"data" => [%{"id" => _id, "amount" => 10_00, "operation" => "CREDIT"}]} = response
     end
+  end
+
+  test "PUT /api/accounts/{account_id}/balance" do
+    params0 = %{
+      first_name: "Joe",
+      last_name: "Doe",
+      cpf: Brcpfcnpj.cpf_generate(),
+      balance: 10_00
+    }
+
+    assert %{"data" => %{"id" => id} = account} =
+             post(anonymous_conn(), ~p"/api/accounts", params0) |> get_resp_body()
+
+    response =
+      get(authed_conn(account), "/api/accounts/#{id}/balance")
+      |> get_resp_body()
+
+    assert %{"data" => %{"balance" => 10_00}} = response
   end
 end

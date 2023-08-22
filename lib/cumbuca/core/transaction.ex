@@ -4,7 +4,7 @@ defmodule Cumbuca.Core.Transaction do
     ---
     Account Transaction
   """
-  alias Cumbuca.Core.Account
+  alias Cumbuca.Core.{Account, Consolidation}
   alias Cumbuca.Utils
   use Cumbuca.Schema
   @basic_fields [:id, :amount, :status, :completed_at]
@@ -13,14 +13,15 @@ defmodule Cumbuca.Core.Transaction do
     :receiver_id,
     :processing_at,
     :error_at,
-    :refund?,
+    :refunded?,
+    :from_refund?,
     :error?,
     :error_reason,
     :inserted_at,
     :updated_at
   ]
 
-  @transaction_status [:PENDING, :PROCESSING, :COMPLETED, :CANCELED, :ERROR]
+  @transaction_status [:PENDING, :PROCESSING, :COMPLETED, :CANCELED, :ERROR, :REFUNDED]
 
   generate_bee do
     permission(:basic, @basic_fields)
@@ -39,8 +40,11 @@ defmodule Cumbuca.Core.Transaction do
 
       field :amount, :integer, __swagger__: [description: "amount", example: 10_000]
 
-      field :refund?, :boolean,
-        __swagger__: [description: "flag to mark if was refund referenced", example: true]
+      field :from_refund?, :boolean,
+        __swagger__: [description: "flag to mark if was from refund", example: true]
+
+      field :refunded?, :boolean,
+        __swagger__: [description: "flag to mark if was refunded", example: true]
 
       field :error?, :boolean,
         __swagger__: [description: "flag to mark with error", example: true]
@@ -73,6 +77,7 @@ defmodule Cumbuca.Core.Transaction do
       field :__action__, Ecto.Enum,
         values: [
           :CREATE,
+          :CREATE_REFUNDED,
           :PROCESS,
           :COMPLETE,
           :REFUND,
@@ -88,6 +93,7 @@ defmodule Cumbuca.Core.Transaction do
       belongs_to :payer, Account, foreign_key: :payer_id
       belongs_to :receiver, Account, foreign_key: :receiver_id
       belongs_to :reference, __MODULE__, foreign_key: :reference_id
+      has_many :consolidations, Consolidation
     end
   end
 
@@ -102,6 +108,10 @@ defmodule Cumbuca.Core.Transaction do
   def changeset(model, attrs), do: run_action(model, attrs)
 
   def run_action(model, %{__action__: :CREATE} = attr), do: create_action(model, attr)
+
+  def run_action(model, %{__action__: :CREATE_REFUNDED} = attr),
+    do: create_refunded_action(model, attr)
+
   def run_action(model, %{__action__: :PROCESS} = attr), do: process_action(model, attr)
   def run_action(model, %{__action__: :COMPLETE} = attr), do: complete_action(model, attr)
   def run_action(model, %{__action__: :REFUND} = attr), do: refund_action(model, attr)
@@ -114,9 +124,19 @@ defmodule Cumbuca.Core.Transaction do
     model
     |> cast(attrs, fields)
     |> validate_required(fields)
-    |> validate_unique_transaction()
     |> has_sufficient_balance()
     |> put_change(:status, :PENDING)
+  end
+
+  defp create_refunded_action(model, attrs) do
+    fields = [:payer_id, :receiver_id, :amount, :reference_id]
+
+    model
+    |> cast(attrs, fields)
+    |> validate_required(fields)
+    |> foreign_key_constraint(:reference_id)
+    |> put_change(:status, :PENDING)
+    |> put_change(:from_refund?, true)
   end
 
   defp process_action(model, attrs) do
@@ -134,12 +154,13 @@ defmodule Cumbuca.Core.Transaction do
   end
 
   defp refund_action(model, attrs) do
-    fields = [:payer_id, :receiver_id, :amount, :refund?, :reference_id]
+    fields = [:payer_id, :receiver_id, :amount, :refunded?]
 
     model
     |> cast(attrs, fields)
     |> validate_required(fields)
-    |> put_change(:status, :PENDING)
+    |> put_change(:status, :REFUNDED)
+    |> put_change(:refunded?, true)
   end
 
   defp cancel_action(model, attrs) do
@@ -159,11 +180,6 @@ defmodule Cumbuca.Core.Transaction do
     |> put_change(:error_at, Utils.now_sec())
     |> put_change(:error?, true)
     |> put_change(:status, :ERROR)
-  end
-
-  defp validate_unique_transaction(changeset) do
-    ## TODO: validade unique transation (idempotency key)
-    changeset
   end
 
   defp has_sufficient_balance(changeset) do

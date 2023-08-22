@@ -51,4 +51,27 @@ defmodule CumbucaWeb.TransactionsController do
     |> TransactionContext.cancel_transaction()
     |> Response.pipe(conn)
   end
+
+  @doc """
+    Refund transaction
+
+    ---| swagger |---
+      tag "transactions"
+      post "/api/transactions/{transaction_id}/refund"
+      consumes "application/json"
+      produces "application/json"
+      parameter "authorization", :header, :string, "Access Token"
+      parameters do
+        transaction_id :path, :string, "Transaction id", required: true
+      end
+      CumbucaWeb.Response.swagger 200, data: Cumbuca.Core.Transaction._swagger_schema_(:basic)
+    ---| end |---
+  """
+  def refund(conn, params) do
+    params
+    |> Map.put("authed", Auth.get_user(conn))
+    |> Map.put("permission", Auth.get_permission(conn))
+    |> TransactionContext.refund_transaction()
+    |> Response.pipe(conn)
+  end
 end

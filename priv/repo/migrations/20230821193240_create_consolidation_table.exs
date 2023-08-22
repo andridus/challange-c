@@ -11,7 +11,7 @@ defmodule Cumbuca.Repo.Migrations.CreateConsolidationTable do
       add :refunded_at, :utc_datetime
 
       add :account_id, references(:accounts, on_delete: :nothing)
-      add :payed_to, references(:accounts, on_delete: :nothing)
+      add :paid_to, references(:accounts, on_delete: :nothing)
       add :received_from, references(:accounts, on_delete: :nothing)
       add :transaction_id, references(:transactions, on_delete: :nothing)
 

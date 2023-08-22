@@ -3,7 +3,7 @@ defmodule Cumbuca.TransactionContext do
     Context of transaction functions
   """
   alias Cumbuca.Core.{Account, Transaction}
-  alias Cumbuca.Utils
+  alias Cumbuca.{Repo, Utils}
   import Happy
 
   @doc """
@@ -28,7 +28,7 @@ defmodule Cumbuca.TransactionContext do
                                     Utils.get_param(params, "transaction_password")
 
       @active_payer_account {:ok, %{active?: true} = payer} = Account.Api.get(payer_id)
-      @active_receive_account {:ok, %{active?: true}} = Account.Api.get(receiver_id)
+      @active_receiver_account {:ok, %{active?: true}} = Account.Api.get(receiver_id)
 
       # validate if payer is authed user
       @granted_payer true = authed.id == payer_id
@@ -71,8 +71,7 @@ defmodule Cumbuca.TransactionContext do
     happy_path do
       # required params
       @param_transaction_id {:ok, transaction_id} = Utils.get_param(params, "transaction_id")
-      @transaction {:ok, %{payer_id: payer_id} = transaction} =
-                     Transaction.Api.get(transaction_id)
+      @transaction {:ok, %{payer_id: payer_id}} = Transaction.Api.get(transaction_id)
 
       @active_payer_account {:ok, %{active?: true}} = Account.Api.get(payer_id)
 
@@ -87,6 +86,69 @@ defmodule Cumbuca.TransactionContext do
       {:active_payer_account, {:error, :not_found}} -> {:error, "payer_account_not_found"}
       {:active_payer_account, _} -> {:error, "payer_account_not_available"}
       {:granted_payer, false} -> {:error, "operation_not_allowed_for_this_user"}
+      {atom, :error} -> {:error, "#{atom}_not_found"}
+      {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
+      {_atom, error} -> {:error, error}
+    end
+  end
+
+  @doc """
+    Refund a transaction (auth required)
+    params:
+      - authed
+      - permission
+      - transaction_id
+  """
+  def refund_transaction(params) do
+    authed = Access.get(params, "authed")
+    permission = Access.get(params, "permission") || :basic
+
+    happy_path do
+      # required params
+      @param_transaction_id {:ok, transaction_id} = Utils.get_param(params, "transaction_id")
+      @transaction {:ok,
+                    %{payer_id: payer_id, refunded?: false, status: :COMPLETED} = transaction} =
+                     Transaction.Api.get(transaction_id)
+
+      @active_payer_account {:ok, %{active?: true}} = Account.Api.get(payer_id)
+
+      # validate if payer is authed user
+      @granted_payer true = authed.id == payer_id
+
+      @refunded_transaction {:ok, transaction} =
+                              Repo.transaction(fn -> refund_transaction_priv(transaction) end)
+
+      {:ok, transaction}
+      |> Utils.visible_fields(permission)
+    else
+      {:active_payer_account, {:error, :not_found}} -> {:error, "payer_account_not_found"}
+      {:active_payer_account, _} -> {:error, "payer_account_not_available"}
+      {:granted_payer, false} -> {:error, "operation_not_allowed_for_this_user"}
+      {:transaction, {:ok, %{refunded?: true}}} -> {:error, "already_refunded"}
+      {atom, :error} -> {:error, "#{atom}_not_found"}
+      {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
+      {_atom, error} -> {:error, error}
+    end
+  end
+
+  defp refund_transaction_priv(transaction) do
+    happy_path do
+      refund_params = %{id: transaction.id, __action__: :REFUND}
+
+      @transaction_refunded {:ok, _} = Transaction.Api.update(refund_params)
+
+      insert_params = %{
+        payer_id: transaction.receiver_id,
+        receiver_id: transaction.payer_id,
+        amount: transaction.amount,
+        reference_id: transaction.id,
+        __action__: :CREATE_REFUNDED
+      }
+
+      @transaction {:ok, refunded} = Transaction.Api.insert(insert_params)
+
+      refunded
+    else
       {atom, :error} -> {:error, "#{atom}_not_found"}
       {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
       {_atom, error} -> {:error, error}

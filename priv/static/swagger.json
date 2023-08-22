@@ -33,6 +33,7 @@
                       "description": "fields available for `BASIC` permission",
                       "example": {
                         "active?": true,
+                        "cpf": "123.456.789-11",
                         "first_name": "Joe",
                         "last_name": "Doe",
                         "status": "ACTIVE"
@@ -42,6 +43,11 @@
                           "description": "active account?",
                           "example": true,
                           "type": "boolean"
+                        },
+                        "cpf": {
+                          "description": "cpf of account user",
+                          "example": "123.456.789-11",
+                          "type": "string"
                         },
                         "first_name": {
                           "description": "first name of account user",
@@ -137,6 +143,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "active?": true,
+                    "cpf": "123.456.789-11",
                     "first_name": "Joe",
                     "last_name": "Doe",
                     "status": "ACTIVE"
@@ -146,6 +153,11 @@
                       "description": "active account?",
                       "example": true,
                       "type": "boolean"
+                    },
+                    "cpf": {
+                      "description": "cpf of account user",
+                      "example": "123.456.789-11",
+                      "type": "string"
                     },
                     "first_name": {
                       "description": "first name of account user",
@@ -223,6 +235,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "active?": true,
+                    "cpf": "123.456.789-11",
                     "first_name": "Joe",
                     "last_name": "Doe",
                     "status": "ACTIVE"
@@ -232,6 +245,11 @@
                       "description": "active account?",
                       "example": true,
                       "type": "boolean"
+                    },
+                    "cpf": {
+                      "description": "cpf of account user",
+                      "example": "123.456.789-11",
+                      "type": "string"
                     },
                     "first_name": {
                       "description": "first name of account user",
@@ -307,6 +325,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "active?": true,
+                    "cpf": "123.456.789-11",
                     "first_name": "Joe",
                     "last_name": "Doe",
                     "status": "ACTIVE"
@@ -316,6 +335,11 @@
                       "description": "active account?",
                       "example": true,
                       "type": "boolean"
+                    },
+                    "cpf": {
+                      "description": "cpf of account user",
+                      "example": "123.456.789-11",
+                      "type": "string"
                     },
                     "first_name": {
                       "description": "first name of account user",
@@ -413,6 +437,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "active?": true,
+                    "cpf": "123.456.789-11",
                     "first_name": "Joe",
                     "last_name": "Doe",
                     "status": "ACTIVE"
@@ -422,6 +447,11 @@
                       "description": "active account?",
                       "example": true,
                       "type": "boolean"
+                    },
+                    "cpf": {
+                      "description": "cpf of account user",
+                      "example": "123.456.789-11",
+                      "type": "string"
                     },
                     "first_name": {
                       "description": "first name of account user",
@@ -529,6 +559,106 @@
         ]
       }
     },
+    "/api/accounts/{account_id}/balance": {
+      "get": {
+        "description": "Get balance from account",
+        "operationId": "CumbucaWeb.AccountsController.show_balance",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Account id",
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": [
+                    {
+                      "description": "fields available for `ACCOUNT_OWNER` permission",
+                      "example": {
+                        "amount": 10000,
+                        "description": "OPERAÇÃO DE DEBITO",
+                        "operation": "DEBIT",
+                        "refunded?": true,
+                        "refunded_at": "2023-08-22T02:25:12Z"
+                      },
+                      "properties": {
+                        "amount": {
+                          "description": "amount",
+                          "example": 10000,
+                          "type": "integer"
+                        },
+                        "description": {
+                          "description": "transaction description",
+                          "example": "OPERAÇÃO DE DEBITO",
+                          "type": "string"
+                        },
+                        "inserted_at": {
+                          "type": "utc_datetime"
+                        },
+                        "operation": {
+                          "description": "operation of this transaction",
+                          "enum": [
+                            "DEBIT",
+                            "CREDIT"
+                          ],
+                          "example": "DEBIT",
+                          "type": "Elixir.Ecto.Enum"
+                        },
+                        "paid_to": {
+                          "type": "binary_id"
+                        },
+                        "received_from": {
+                          "type": "binary_id"
+                        },
+                        "refunded?": {
+                          "description": "flag to mark if was refunded",
+                          "example": true,
+                          "type": "boolean"
+                        },
+                        "refunded_at": {
+                          "description": "DateTime when the transaction was refunded",
+                          "example": "2023-08-22T02:25:12Z",
+                          "type": "utc_datetime"
+                        },
+                        "updated_at": {
+                          "type": "utc_datetime"
+                        }
+                      },
+                      "required": [],
+                      "title": "Consolidated Transaction Entity",
+                      "type": "object"
+                    }
+                  ],
+                  "type": "array"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Get balance from account",
+        "tags": [
+          "accounts"
+        ]
+      }
+    },
     "/api/accounts/{account_id}/consolidations": {
       "get": {
         "description": "Get consolidations from account",
@@ -579,15 +709,21 @@
                       "description": "fields available for `ACCOUNT_OWNER` permission",
                       "example": {
                         "amount": 10000,
+                        "description": "OPERAÇÃO DE DEBITO",
                         "operation": "DEBIT",
                         "refunded?": true,
-                        "refunded_at": "2023-08-21T22:18:41Z"
+                        "refunded_at": "2023-08-22T02:25:12Z"
                       },
                       "properties": {
                         "amount": {
                           "description": "amount",
                           "example": 10000,
                           "type": "integer"
+                        },
+                        "description": {
+                          "description": "transaction description",
+                          "example": "OPERAÇÃO DE DEBITO",
+                          "type": "string"
                         },
                         "inserted_at": {
                           "type": "utc_datetime"
@@ -601,7 +737,7 @@
                           "example": "DEBIT",
                           "type": "Elixir.Ecto.Enum"
                         },
-                        "payed_to": {
+                        "paid_to": {
                           "type": "binary_id"
                         },
                         "received_from": {
@@ -614,7 +750,7 @@
                         },
                         "refunded_at": {
                           "description": "DateTime when the transaction was refunded",
-                          "example": "2023-08-21T22:18:41Z",
+                          "example": "2023-08-22T02:25:12Z",
                           "type": "utc_datetime"
                         },
                         "updated_at": {
@@ -821,12 +957,12 @@
                   },
                   "payer_id": {
                     "description": "Id of payer account",
-                    "example": "53b1ef76-2141-42c4-a212-5f219e04e484",
+                    "example": "74d55aeb-17cb-4040-84df-9cc178e1d292",
                     "type": "uuid"
                   },
                   "receiver_id": {
                     "description": "Id of receiver account",
-                    "example": "2e5b0b46-6959-445d-8902-c0ba7778ce77",
+                    "example": "e6b81346-8aa8-4cfe-99bf-d5f5bb9b89c0",
                     "type": "uuid"
                   }
                 }
@@ -842,7 +978,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-21T22:18:41Z",
+                    "completed_at": "2023-08-22T02:25:12Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -853,7 +989,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-21T22:18:41Z",
+                      "example": "2023-08-22T02:25:12Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -864,7 +1000,8 @@
                         "PROCESSING",
                         "COMPLETED",
                         "CANCELED",
-                        "ERROR"
+                        "ERROR",
+                        "REFUNDED"
                       ],
                       "example": "PENDING",
                       "type": "Elixir.Ecto.Enum"
@@ -920,7 +1057,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-21T22:18:41Z",
+                    "completed_at": "2023-08-22T02:25:12Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -931,7 +1068,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-21T22:18:41Z",
+                      "example": "2023-08-22T02:25:12Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -942,7 +1079,8 @@
                         "PROCESSING",
                         "COMPLETED",
                         "CANCELED",
-                        "ERROR"
+                        "ERROR",
+                        "REFUNDED"
                       ],
                       "example": "PENDING",
                       "type": "Elixir.Ecto.Enum"
@@ -958,6 +1096,85 @@
           }
         },
         "summary": "Cancel pending transaction",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{transaction_id}/refund": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Refund transaction",
+        "operationId": "CumbucaWeb.TransactionsController.refund",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Transaction id",
+            "in": "path",
+            "name": "transaction_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "fields available for `BASIC` permission",
+                  "example": {
+                    "amount": 10000,
+                    "completed_at": "2023-08-22T02:25:12Z",
+                    "status": "PENDING"
+                  },
+                  "properties": {
+                    "amount": {
+                      "description": "amount",
+                      "example": 10000,
+                      "type": "integer"
+                    },
+                    "completed_at": {
+                      "description": "DateTime when the transaction was completed",
+                      "example": "2023-08-22T02:25:12Z",
+                      "type": "utc_datetime"
+                    },
+                    "status": {
+                      "default": "PENDING",
+                      "description": "status of transaction",
+                      "enum": [
+                        "PENDING",
+                        "PROCESSING",
+                        "COMPLETED",
+                        "CANCELED",
+                        "ERROR",
+                        "REFUNDED"
+                      ],
+                      "example": "PENDING",
+                      "type": "Elixir.Ecto.Enum"
+                    }
+                  },
+                  "required": [],
+                  "title": "Transaction Entity",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Refund transaction",
         "tags": [
           "transactions"
         ]

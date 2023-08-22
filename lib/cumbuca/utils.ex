@@ -35,6 +35,10 @@ defmodule Cumbuca.Utils do
     {:ok, Map.take(model, entity.bee_permission(permission))}
   end
 
+  def visible_fields(%{__struct__: entity} = model, permission) do
+    Map.take(model, entity.bee_permission(permission))
+  end
+
   @doc """
     Remove nil fields
   """

@@ -12,8 +12,9 @@ defmodule Cumbuca.Core.Consolidation do
     :id,
     :amount,
     :operation,
+    :description,
     :received_from,
-    :payed_to,
+    :paid_to,
     :refunded_at,
     :refunded?,
     :inserted_at,
@@ -55,7 +56,8 @@ defmodule Cumbuca.Core.Consolidation do
       field :__action__, Ecto.Enum,
         values: [
           :DEBIT,
-          :CREDIT
+          :CREDIT,
+          :REFUND
         ],
         virtual: true
 
@@ -64,7 +66,7 @@ defmodule Cumbuca.Core.Consolidation do
       timestamps()
 
       belongs_to :account, Account
-      belongs_to :payed, Account, foreign_key: :payed_to
+      belongs_to :paid, Account, foreign_key: :paid_to
       belongs_to :received, Account, foreign_key: :received_from
       belongs_to :transaction, Transaction
     end
@@ -82,9 +84,10 @@ defmodule Cumbuca.Core.Consolidation do
 
   def run_action(model, %{__action__: :DEBIT} = attr), do: debit_action(model, attr)
   def run_action(model, %{__action__: :CREDIT} = attr), do: credit_action(model, attr)
+  def run_action(model, %{__action__: :REFUND} = attr), do: refund_action(model, attr)
 
   defp debit_action(model, attrs) do
-    fields = [:payed_to, :amount, :account_id, :description]
+    fields = [:paid_to, :amount, :account_id, :description, :transaction_id]
 
     model
     |> cast(attrs, fields)
@@ -93,11 +96,20 @@ defmodule Cumbuca.Core.Consolidation do
   end
 
   defp credit_action(model, attrs) do
-    fields = [:received_from, :amount, :account_id, :description]
+    fields = [:received_from, :amount, :account_id, :description, :transaction_id]
 
     model
     |> cast(attrs, fields)
     |> put_change(:operation, :CREDIT)
+  end
+
+  defp refund_action(model, attrs) do
+    fields = []
+
+    model
+    |> cast(attrs, fields)
+    |> put_change(:refunded?, true)
+    |> put_change(:refunded_at, Utils.now_sec())
   end
 
   defp has_sufficient_balance(changeset) do

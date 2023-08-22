@@ -196,4 +196,26 @@ defmodule CumbucaWeb.AccountsController do
     |> ConsolidationContext.all_by_account()
     |> Response.pipe(conn)
   end
+
+  @doc """
+    Get balance from account
+
+    ---| swagger |---
+      tag "accounts"
+      get "/api/accounts/{account_id}/balance"
+      produces "application/json"
+      parameter "authorization", :header, :string, "Access Token"
+      parameters do
+        account_id :path, :string, "Account id", required: true
+      end
+      CumbucaWeb.Response.swagger 200, data: [Cumbuca.Core.Consolidation._swagger_schema_(:account_owner)]
+    ---| end |---
+  """
+  def show_balance(conn, params) do
+    params
+    |> Map.put("authed", Auth.get_user(conn))
+    |> Map.put("permission", Auth.get_permission(conn))
+    |> AccountContext.show_balance()
+    |> Response.pipe(conn)
+  end
 end

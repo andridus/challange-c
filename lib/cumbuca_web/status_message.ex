@@ -15,16 +15,17 @@ defmodule CumbucaWeb.StatusMessage do
     {422, :form_error},
     {500, :internal_server_error},
     ## account
-    {400, :account_not_found},
-    {400, :account_was_deleted},
-    {400, :account_id_is_nil},
-    {400, :password_dont_match},
-    {400, :password_length_should_be_four},
+    {422, :account_not_found},
+    {422, :account_was_deleted},
+    {422, :account_id_is_nil},
+    {422, :password_dont_match},
+    {422, :password_length_should_be_four},
     ## auth
-    {400, :cpf_or_password_invalid},
+    {422, :cpf_or_password_invalid},
     ## transaction
-    {400, :invalid_password},
-    {400, :operation_not_allowed_for_this_user}
+    {422, :invalid_password},
+    {422, :operation_not_allowed_for_this_user},
+    {422, :already_refunded}
   ]
   def from_message("param_" <> _key), do: 400
 

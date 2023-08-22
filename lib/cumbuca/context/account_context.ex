@@ -157,7 +157,7 @@ defmodule Cumbuca.AccountContext do
       - password length should be equals 4
   """
   def patch_transaction_password(params) do
-    _authed = Access.get(params, "authed")
+    authed = Access.get(params, "authed")
     _permission = Access.get(params, "permission") || :basic
 
     happy_path do
@@ -171,6 +171,9 @@ defmodule Cumbuca.AccountContext do
       @length 4 = String.length(password)
       @equals true = password == re_password
 
+      # validate if payer is authed user
+      @granted_payer true = authed.id == account_id
+
       update_params =
         %{
           id: account_id,
@@ -182,6 +185,7 @@ defmodule Cumbuca.AccountContext do
       @account {:ok, _account} = Account.Api.update(update_params)
       {:ok, :transaction_password_updated}
     else
+      {:granted_payer, false} -> {:error, "operation_not_allowed_for_this_user"}
       {:account, {:error, false}} -> {:error, "account_not_found"}
       {:length, _} -> {:error, "password_length_should_be_four"}
       {:equals, false} -> {:error, "password_dont_match"}
@@ -274,6 +278,26 @@ defmodule Cumbuca.AccountContext do
       @password true = Account.Api.check_access_password(account, password)
 
       {:ok, account}
+    else
+      {:account, {:error, _}} -> {:error, "account_not_found"}
+      {:password, false} -> {:error, "cpf_or_password_invalid"}
+      {atom, :error} -> {:error, "#{atom}_not_found"}
+      {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
+      {_atom, error} -> {:error, error}
+    end
+  end
+
+  @doc """
+    Show balance for account
+    params:
+      - account_id
+  """
+  def show_balance(params) do
+    happy_path do
+      # required params
+      @param_account_id {:ok, account_id} = Utils.get_param(params, "account_id")
+      @account {:ok, account} = Account.Api.get(account_id)
+      {:ok, %{balance: Account.Api.get_balance(account)}}
     else
       {:account, {:error, _}} -> {:error, "account_not_found"}
       {:password, false} -> {:error, "cpf_or_password_invalid"}

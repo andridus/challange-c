@@ -49,6 +49,7 @@ defmodule CumbucaWeb.Router do
       get "/accounts", AccountsController, :all
       get "/accounts/:account_id", AccountsController, :one
       get "/accounts/:account_id/consolidations", AccountsController, :all_consolidations
+      get "/accounts/:account_id/balance", AccountsController, :show_balance
       put "/accounts/:account_id", AccountsController, :update
 
       patch "/accounts/:account_id/transaction-password",
@@ -64,6 +65,7 @@ defmodule CumbucaWeb.Router do
 
       post "/transactions", TransactionsController, :create
       post "/transactions/:transaction_id/cancel", TransactionsController, :cancel
+      post "/transactions/:transaction_id/refund", TransactionsController, :refund
     end
   end
 
