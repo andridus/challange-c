@@ -4,6 +4,7 @@ defmodule Cumbuca.AccountContext do
   """
   alias Cumbuca.Core.{Account, Consolidation}
   alias Cumbuca.{Repo, Utils}
+  alias Cumbuca.Worker.AccountsSupervisor
   import Happy
 
   @doc """
@@ -17,7 +18,6 @@ defmodule Cumbuca.AccountContext do
       - balance
   """
   def create_account(params) do
-    _authed = Access.get(params, "authed")
     permission = Access.get(params, "permission") || :basic
 
     happy_path do
@@ -59,6 +59,7 @@ defmodule Cumbuca.AccountContext do
       else
         Consolidation.Api.insert(credit_params)
       end
+      {:ok, _pid} = AccountsSupervisor.start_account(account.id)
       account
     else
       {atom, :error} -> Repo.rollback("#{atom}_not_found")
@@ -158,7 +159,6 @@ defmodule Cumbuca.AccountContext do
   """
   def patch_transaction_password(params) do
     authed = Access.get(params, "authed")
-    _permission = Access.get(params, "permission") || :basic
 
     happy_path do
       # required params
@@ -203,7 +203,6 @@ defmodule Cumbuca.AccountContext do
       - permission
   """
   def all(params) do
-    _authed = Access.get(params, "authed")
     permission = Access.get(params, "permission") || :basic
 
     Account.Api.all(
@@ -221,16 +220,19 @@ defmodule Cumbuca.AccountContext do
       - account_id
   """
   def one(params) do
-    _authed = Access.get(params, "authed")
+    authed = Access.get(params, "authed")
     permission = Access.get(params, "permission") || :basic
 
     happy_path do
       # required params
       @param_account_id {:ok, account_id} = Utils.get_param(params, "account_id")
       @account {:ok, account} = Account.Api.get(account_id)
+      # validate if account is authed user
+      @granted_authed true = authed.id == account.id
       {:ok, account}
       |> Utils.visible_fields(permission)
     else
+      {:granted_authed, false} -> {:error, "operation_not_allowed_for_this_user"}
       {atom, :error} -> {:error, "#{atom}_not_found"}
       {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
       {_atom, error} -> {:error, error}
@@ -246,7 +248,7 @@ defmodule Cumbuca.AccountContext do
       - account_id
   """
   def delete(params) do
-    _authed = Access.get(params, "authed")
+    authed = Access.get(params, "authed")
     permission = Access.get(params, "permission") || :basic
 
     happy_path do
@@ -254,9 +256,13 @@ defmodule Cumbuca.AccountContext do
       @param_account_id {:ok, account_id} = Utils.get_param(params, "account_id")
       @account {:ok, account} = Account.Api.get(account_id)
 
+      # validate if account is authed user
+      @granted_authed true = authed.id == account.id
+
       Account.Api.update(%{id: account.id, __action__: :CLOSE})
       |> Utils.visible_fields(permission)
     else
+      {:granted_authed, false} -> {:error, "operation_not_allowed_for_this_user"}
       {atom, :error} -> {:error, "#{atom}_not_found"}
       {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
       {_atom, error} -> {:error, error}
@@ -276,7 +282,6 @@ defmodule Cumbuca.AccountContext do
       @param_access_password {:ok, password} = Utils.get_param(params, "access_password")
       @account {:ok, account} = Account.Api.get_by(where: [cpf: cpf])
       @password true = Account.Api.check_access_password(account, password)
-
       {:ok, account}
     else
       {:account, {:error, _}} -> {:error, "account_not_found"}
@@ -293,14 +298,19 @@ defmodule Cumbuca.AccountContext do
       - account_id
   """
   def show_balance(params) do
+    authed = Access.get(params, "authed")
+
     happy_path do
       # required params
       @param_account_id {:ok, account_id} = Utils.get_param(params, "account_id")
       @account {:ok, account} = Account.Api.get(account_id)
+      # validate if account is authed user
+      @granted_authed true = authed.id == account.id
       {:ok, %{balance: Account.Api.get_balance(account)}}
     else
       {:account, {:error, _}} -> {:error, "account_not_found"}
       {:password, false} -> {:error, "cpf_or_password_invalid"}
+      {:granted_authed, false} -> {:error, "operation_not_allowed_for_this_user"}
       {atom, :error} -> {:error, "#{atom}_not_found"}
       {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
       {_atom, error} -> {:error, error}

@@ -71,7 +71,7 @@ defmodule Cumbuca.ConsolidationContext do
         transaction_id: transaction.id,
         paid_to: transaction.receiver_id,
         amount: transaction.amount,
-        description: "TRANSFERENCIA INTERNA",
+        description: "PIX ENVIADO",
         __action__: :DEBIT
       }
 
@@ -82,7 +82,7 @@ defmodule Cumbuca.ConsolidationContext do
         account_id: transaction.receiver_id,
         transaction_id: transaction.id,
         received_from: transaction.payer_id,
-        description: "TRANSFERENCIA INTERNA",
+        description: "PIX RECEBIDO",
         amount: transaction.amount,
         __action__: :CREDIT
       }
@@ -119,7 +119,7 @@ defmodule Cumbuca.ConsolidationContext do
       - to
   """
   def all_by_account(params) do
-    _authed = Access.get(params, "authed")
+    authed = Access.get(params, "authed")
     permission = Access.get(params, "permission") || :basic
     before30 = Date.utc_today() |> Date.add(-30)
     now = Date.utc_today()
@@ -129,9 +129,14 @@ defmodule Cumbuca.ConsolidationContext do
     happy_path do
       # required params
       @param_account_id {:ok, account_id} = Utils.get_param(params, "account_id")
+
+      # validate if account is authed user
+      @granted_authed true = authed.id == account_id
+
       Consolidation.Api.all_by_account_and_date(account_id, from, to)
       |> Enum.map(&Utils.visible_fields(&1, permission))
     else
+      {:granted_authed, false} -> {:error, "operation_not_allowed_for_this_user"}
       {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
     end
   end

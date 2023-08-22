@@ -4,6 +4,7 @@ defmodule Cumbuca.Application do
   @moduledoc false
 
   use Application
+  alias Cumbuca.Worker.AccountsSupervisor
 
   @impl true
   def start(_type, _args) do
@@ -24,8 +25,12 @@ defmodule Cumbuca.Application do
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
+
     opts = [strategy: :one_for_one, name: Cumbuca.Supervisor]
-    Supervisor.start_link(children, opts)
+    sup = Supervisor.start_link(children, opts)
+
+    ## start accounts supervisor
+    AccountsSupervisor.start_link()
   end
 
   # Tell Phoenix to update the endpoint configuration

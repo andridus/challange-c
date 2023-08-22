@@ -6,6 +6,33 @@
   "definitions": {},
   "swagger": "1.0",
   "paths": {
+    "/": {
+      "get": {
+        "description": "Health Check",
+        "operationId": "CumbucaWeb.PageController.health_check",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "success": true
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Health Check",
+        "tags": [
+          "Health Check"
+        ]
+      }
+    },
     "/api/accounts": {
       "get": {
         "description": "Get all accounts",
@@ -596,7 +623,7 @@
                         "description": "OPERAÇÃO DE DEBITO",
                         "operation": "DEBIT",
                         "refunded?": true,
-                        "refunded_at": "2023-08-22T02:25:12Z"
+                        "refunded_at": "2023-08-22T22:51:22Z"
                       },
                       "properties": {
                         "amount": {
@@ -634,7 +661,7 @@
                         },
                         "refunded_at": {
                           "description": "DateTime when the transaction was refunded",
-                          "example": "2023-08-22T02:25:12Z",
+                          "example": "2023-08-22T22:51:22Z",
                           "type": "utc_datetime"
                         },
                         "updated_at": {
@@ -712,7 +739,7 @@
                         "description": "OPERAÇÃO DE DEBITO",
                         "operation": "DEBIT",
                         "refunded?": true,
-                        "refunded_at": "2023-08-22T02:25:12Z"
+                        "refunded_at": "2023-08-22T22:51:22Z"
                       },
                       "properties": {
                         "amount": {
@@ -750,7 +777,7 @@
                         },
                         "refunded_at": {
                           "description": "DateTime when the transaction was refunded",
-                          "example": "2023-08-22T02:25:12Z",
+                          "example": "2023-08-22T22:51:22Z",
                           "type": "utc_datetime"
                         },
                         "updated_at": {
@@ -957,12 +984,12 @@
                   },
                   "payer_id": {
                     "description": "Id of payer account",
-                    "example": "74d55aeb-17cb-4040-84df-9cc178e1d292",
+                    "example": "7ca7ee67-9697-4fa2-b132-bc2fb9d964e7",
                     "type": "uuid"
                   },
                   "receiver_id": {
                     "description": "Id of receiver account",
-                    "example": "e6b81346-8aa8-4cfe-99bf-d5f5bb9b89c0",
+                    "example": "913b49b0-b643-4f57-8a02-86807ca8b2e4",
                     "type": "uuid"
                   }
                 }
@@ -978,7 +1005,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-22T02:25:12Z",
+                    "completed_at": "2023-08-22T22:51:22Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -989,7 +1016,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-22T02:25:12Z",
+                      "example": "2023-08-22T22:51:22Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -1017,6 +1044,85 @@
           }
         },
         "summary": "Create transaction",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{transaction_id}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Get transaction",
+        "operationId": "CumbucaWeb.TransactionsController.one",
+        "parameters": [
+          {
+            "description": "Access Token",
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Transaction id",
+            "in": "path",
+            "name": "transaction_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "fields available for `BASIC` permission",
+                  "example": {
+                    "amount": 10000,
+                    "completed_at": "2023-08-22T22:51:22Z",
+                    "status": "PENDING"
+                  },
+                  "properties": {
+                    "amount": {
+                      "description": "amount",
+                      "example": 10000,
+                      "type": "integer"
+                    },
+                    "completed_at": {
+                      "description": "DateTime when the transaction was completed",
+                      "example": "2023-08-22T22:51:22Z",
+                      "type": "utc_datetime"
+                    },
+                    "status": {
+                      "default": "PENDING",
+                      "description": "status of transaction",
+                      "enum": [
+                        "PENDING",
+                        "PROCESSING",
+                        "COMPLETED",
+                        "CANCELED",
+                        "ERROR",
+                        "REFUNDED"
+                      ],
+                      "example": "PENDING",
+                      "type": "Elixir.Ecto.Enum"
+                    }
+                  },
+                  "required": [],
+                  "title": "Transaction Entity",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "Get transaction",
         "tags": [
           "transactions"
         ]
@@ -1057,7 +1163,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-22T02:25:12Z",
+                    "completed_at": "2023-08-22T22:51:22Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -1068,7 +1174,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-22T02:25:12Z",
+                      "example": "2023-08-22T22:51:22Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -1136,7 +1242,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-22T02:25:12Z",
+                    "completed_at": "2023-08-22T22:51:22Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -1147,7 +1253,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-22T02:25:12Z",
+                      "example": "2023-08-22T22:51:22Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -1177,29 +1283,6 @@
         "summary": "Refund transaction",
         "tags": [
           "transactions"
-        ]
-      }
-    },
-    "/home": {
-      "get": {
-        "description": "Home page",
-        "operationId": "CumbucaWeb.PageController.home",
-        "parameters": [],
-        "produces": [
-          "text/html"
-        ],
-        "requestBody": {},
-        "responses": {
-          "200": {
-            "content": {
-              "text/html": {}
-            },
-            "description": "Home page"
-          }
-        },
-        "summary": "Home page",
-        "tags": [
-          "Static Pages"
         ]
       }
     }

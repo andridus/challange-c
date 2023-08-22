@@ -139,7 +139,8 @@ defmodule Cumbuca.Core.Consolidation do
         where:
           s.account_id == ^account_id and
             fragment("?::date", s.inserted_at) >= ^from and
-            fragment("?::date", s.inserted_at) <= ^to
+            fragment("?::date", s.inserted_at) <= ^to,
+        order_by: [desc: s.inserted_at]
       )
       |> repo().all()
     end

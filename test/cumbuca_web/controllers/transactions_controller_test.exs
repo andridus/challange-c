@@ -2,7 +2,7 @@ defmodule CumbucaWeb.TransactionsControllerTest do
   use CumbucaWeb.ConnCase
 
   alias Cumbuca.ConsolidationContext
-  alias Cumbuca.Core.{Account, Transaction, Consolidation}
+  alias Cumbuca.Core.{Account, Consolidation, Transaction}
 
   describe "Transactions - with insuficient funds" do
     @transaction_password "1234"
@@ -41,7 +41,7 @@ defmodule CumbucaWeb.TransactionsControllerTest do
     @transaction_password "1234"
     setup do
       %{}
-      |> Factory.Account.create_from_context(%{balance: 100_00})
+      |> Factory.Account.create_from_context(%{balance: 10_000})
       |> Factory.Account.set_access_password("12345678")
       |> Factory.Account.set_transaction_password(@transaction_password)
       |> Factory.Account.create_from_context(%{balance: 0}, tag: :receiver)

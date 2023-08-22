@@ -2,18 +2,18 @@ defmodule CumbucaWeb.PageController do
   use CumbucaWeb, :controller
 
   @doc """
-    Home page
+    Health Check
 
     ---| swagger |---
-      tag "Static Pages"
-      get "/home"
-      produces "text/html"
-      CumbucaWeb.Response.swagger 200, message: "Home page"
+      tag "Health Check"
+      get "/"
+      produces "application/json"
+      CumbucaWeb.Response.swagger 200, data: %{success: true}
     ---| end |---
   """
-  def home(conn, _params) do
+  def health_check(conn, _params) do
     # The home page is often custom made,
     # so skip the default app layout.
-    render(conn, :home, layout: false)
+    json(conn, %{success: true, swagger: "/swagger"})
   end
 end

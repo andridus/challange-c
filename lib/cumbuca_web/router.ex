@@ -21,16 +21,15 @@ defmodule CumbucaWeb.Router do
   end
 
   scope "/", CumbucaWeb do
-    pipe_through :browser
+    pipe_through [:api]
 
-    get "/", PageController, :home
+    get "/", PageController, :health_check
   end
 
   scope "/api", CumbucaWeb do
     pipe_through [:api]
 
     ## auth
-
     scope "/auth" do
       post "/login", AuthController, :login
 
@@ -66,6 +65,7 @@ defmodule CumbucaWeb.Router do
       post "/transactions", TransactionsController, :create
       post "/transactions/:transaction_id/cancel", TransactionsController, :cancel
       post "/transactions/:transaction_id/refund", TransactionsController, :refund
+      get "/transactions/:transaction_id", TransactionsController, :one
     end
   end
 

@@ -30,6 +30,29 @@ defmodule CumbucaWeb.TransactionsController do
   end
 
   @doc """
+    Get transaction
+
+    ---| swagger |---
+      tag "transactions"
+      get "/api/transactions/{transaction_id}"
+      consumes "application/json"
+      produces "application/json"
+      parameter "authorization", :header, :string, "Access Token"
+      parameters do
+        transaction_id :path, :string, "Transaction id", required: true
+      end
+      CumbucaWeb.Response.swagger 200, data: Cumbuca.Core.Transaction._swagger_schema_(:basic)
+    ---| end |---
+  """
+  def one(conn, params) do
+    params
+    |> Map.put("authed", Auth.get_user(conn))
+    |> Map.put("permission", Auth.get_permission(conn))
+    |> TransactionContext.by_id()
+    |> Response.pipe(conn)
+  end
+
+  @doc """
     Cancel pending transaction
 
     ---| swagger |---

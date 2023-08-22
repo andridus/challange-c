@@ -3,6 +3,7 @@ defmodule Cumbuca.TransactionContext do
     Context of transaction functions
   """
   alias Cumbuca.Core.{Account, Transaction}
+  alias Cumbuca.OTPCore.AccountWorker
   alias Cumbuca.{Repo, Utils}
   import Happy
 
@@ -42,8 +43,13 @@ defmodule Cumbuca.TransactionContext do
         __action__: :CREATE
       }
 
-      Transaction.Api.insert(insert_params)
-      |> Utils.visible_fields(permission)
+      {:ok, transaction} =
+        Transaction.Api.insert(insert_params)
+        |> Utils.visible_fields(permission)
+
+      AccountWorker.add(payer_id, transaction.id)
+
+      {:ok, transaction}
     else
       {:active_payer_account, {:error, :not_found}} -> {:error, "payer_account_not_found"}
       {:active_payer_account, _} -> {:error, "payer_account_not_available"}
@@ -51,6 +57,37 @@ defmodule Cumbuca.TransactionContext do
       {:active_receiver_account, _} -> {:error, "receiver_account_not_available"}
       {:granted_payer, false} -> {:error, "operation_not_allowed_for_this_user"}
       {:password, false} -> {:error, "invalid_password"}
+      {atom, :error} -> {:error, "#{atom}_not_found"}
+      {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
+      {_atom, error} -> {:error, error}
+    end
+  end
+
+  @doc """
+    get transaction by id(auth required)
+    params:
+      - authed
+      - permission
+      - transaction_id
+  """
+  def by_id(params) do
+    authed = Access.get(params, "authed")
+    permission = Access.get(params, "permission") || :admin
+
+    happy_path do
+      # required params
+      @param_transaction_id {:ok, transaction_id} = Utils.get_param(params, "transaction_id")
+      @transaction {:ok, transaction} = Transaction.Api.get(transaction_id)
+
+      # validate if payer is authed user
+      @granted_payer true = authed.id == transaction.payer_id
+
+      {:ok, transaction}
+      |> Utils.visible_fields(permission)
+    else
+      {:active_payer_account, {:error, :not_found}} -> {:error, "payer_account_not_found"}
+      {:active_payer_account, _} -> {:error, "payer_account_not_available"}
+      {:granted_payer, false} -> {:error, "operation_not_allowed_for_this_user"}
       {atom, :error} -> {:error, "#{atom}_not_found"}
       {atom, {:error, error}} -> {:error, "#{atom}_#{error}"}
       {_atom, error} -> {:error, error}
@@ -117,6 +154,8 @@ defmodule Cumbuca.TransactionContext do
 
       @refunded_transaction {:ok, transaction} =
                               Repo.transaction(fn -> refund_transaction_priv(transaction) end)
+
+      AccountWorker.add(payer_id, transaction.id)
 
       {:ok, transaction}
       |> Utils.visible_fields(permission)
