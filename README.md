@@ -1,7 +1,3 @@
-# Cumbuca
-
-Desafio aceito: [link para o desafio](https://github.com/appcumbuca/desafios/blob/master/desafio-back-end.md)
-
 ### Checklist
 - [x] Cadastro de conta
 - [x] Atualização de senha de acesso a conta
@@ -65,14 +61,14 @@ segundo arquivo do insomnia.json (use o [Insomnia](https://insomnia.rest/downloa
 
 ### Sobre a arquitetura da aplicação
 Criamos uma estrutura pronta pensando em projetos manuteníveis baseando em arquitetura Ports and Adapters (Hexagonal), em detalhes.
-  - `lib/cumbuca/context` - tem todas as funções principais e ações necessárias, bem como permissões e perfil exibições de dados para usuário autenticado ou não.
-  - `lib/cumbuca/core` - tem todas as entidades e dentro de cada entidade a api para comunicação com o banco e quando necessário funções para esse tipo de conexao entidade-db, se encontrarão ali; também encontramos ali as validações mais inerentes a entidade e banco.
-  - `lib/cumbuca/otp_core` - tem os modulos e funções relativos a concorrência.
-  - `lib/cumbuca_web/controllers/api` - tem todas os controllers necessários bem como a definição de swagger para cada action(rota).
-  - `lib/cumbuca_web/response.ex` - definições padrão de retorno de rota
-  - `lib/cumbuca_web/status_message.ex` - definições das mensagens de retorno, viabilizando a internacionalização
-  - `lib/cumbuca_web/auth.ex` - definição do Guardian
-  - `test/cumbuca_web/controllers` - definição de testes dentro de escopos e isolados
+  - `lib/chac/context` - tem todas as funções principais e ações necessárias, bem como permissões e perfil exibições de dados para usuário autenticado ou não.
+  - `lib/chac/core` - tem todas as entidades e dentro de cada entidade a api para comunicação com o banco e quando necessário funções para esse tipo de conexao entidade-db, se encontrarão ali; também encontramos ali as validações mais inerentes a entidade e banco.
+  - `lib/chac/otp_core` - tem os modulos e funções relativos a concorrência.
+  - `lib/chac_web/controllers/api` - tem todas os controllers necessários bem como a definição de swagger para cada action(rota).
+  - `lib/chac_web/response.ex` - definições padrão de retorno de rota
+  - `lib/chac_web/status_message.ex` - definições das mensagens de retorno, viabilizando a internacionalização
+  - `lib/chac_web/auth.ex` - definição do Guardian
+  - `test/chac_web/controllers` - definição de testes dentro de escopos e isolados
   - `test/support/factory` - definição de schema de testes para facilitar os testes.
   - `insomnia.json` - definição de rotas no insomnia para facilitar os testes
   - `_docker` - definição das configurações do docker

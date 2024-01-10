@@ -2,7 +2,7 @@ defmodule Factory.Account do
   @moduledoc """
     Functions to create carts on various scenarios
   """
-  alias Cumbuca.AccountContext
+  alias Chac.AccountContext
   alias Factory.Base, as: B
 
   @doc """

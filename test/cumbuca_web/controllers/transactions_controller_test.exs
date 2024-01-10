@@ -1,8 +1,8 @@
-defmodule CumbucaWeb.TransactionsControllerTest do
-  use CumbucaWeb.ConnCase
+defmodule ChacWeb.TransactionsControllerTest do
+  use ChacWeb.ConnCase
 
-  alias Cumbuca.ConsolidationContext
-  alias Cumbuca.Core.{Account, Consolidation, Transaction}
+  alias Chac.ConsolidationContext
+  alias Chac.Core.{Account, Consolidation, Transaction}
 
   describe "Transactions - with insuficient funds" do
     @transaction_password "1234"

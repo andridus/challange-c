@@ -1,4 +1,4 @@
-defmodule CumbucaWeb.ConnCase do
+defmodule ChacWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule CumbucaWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use CumbucaWeb.ConnCase, async: true`, although
+  by setting `use ChacWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -21,14 +21,14 @@ defmodule CumbucaWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint CumbucaWeb.Endpoint
+      @endpoint ChacWeb.Endpoint
 
-      use CumbucaWeb, :verified_routes
+      use ChacWeb, :verified_routes
 
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import CumbucaWeb.ConnCase
+      import ChacWeb.ConnCase
     end
   end
 
@@ -47,7 +47,7 @@ defmodule CumbucaWeb.ConnCase do
       |> authed_conn()
 
   def authed_conn(account) do
-    {_, token, _} = account |> CumbucaWeb.Auth.encode_and_sign()
+    {_, token, _} = account |> ChacWeb.Auth.encode_and_sign()
 
     Phoenix.ConnTest.build_conn()
     |> put_req_header("authorization", "Bearer #{token}")
@@ -60,7 +60,7 @@ defmodule CumbucaWeb.ConnCase do
   def get_resp_body(conn), do: conn |> Map.get(:resp_body) |> Jason.decode!()
 
   setup tags do
-    Cumbuca.DataCase.setup_sandbox(tags)
+    Chac.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

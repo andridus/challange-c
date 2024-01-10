@@ -2,8 +2,8 @@ defmodule Factory do
   @moduledoc """
     This module configure default for all schemas for Factory tests
   """
-  alias Cumbuca.Core.Account
-  alias Cumbuca.Repo
+  alias Chac.Core.Account
+  alias Chac.Repo
 
   # @doc """
   #   create an account with minimum requirement

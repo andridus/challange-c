@@ -1,5 +1,5 @@
-defmodule CumbucaWeb.AuthControllerTest do
-  use CumbucaWeb.ConnCase
+defmodule ChacWeb.AuthControllerTest do
+  use ChacWeb.ConnCase
 
   describe "CRUD Accounts" do
     @access_password "12345678"

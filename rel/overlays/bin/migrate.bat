@@ -1,1 +1,1 @@
-call "%~dp0\cumbuca" eval Cumbuca.Release.migrate
+call "%~dp0\cumbuca" eval Chac.Release.migrate

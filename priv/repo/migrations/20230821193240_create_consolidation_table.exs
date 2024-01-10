@@ -1,4 +1,4 @@
-defmodule Cumbuca.Repo.Migrations.CreateConsolidationTable do
+defmodule Chac.Repo.Migrations.CreateConsolidationTable do
   use Ecto.Migration
 
   def change do

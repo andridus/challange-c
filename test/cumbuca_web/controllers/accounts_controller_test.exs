@@ -1,7 +1,7 @@
-defmodule CumbucaWeb.AccountsControllerTest do
-  use CumbucaWeb.ConnCase
+defmodule ChacWeb.AccountsControllerTest do
+  use ChacWeb.ConnCase
 
-  alias Cumbuca.Core.Account
+  alias Chac.Core.Account
 
   describe "CRUD Accounts" do
     setup do

@@ -1,7 +1,7 @@
 {
   "info": {
     "version": "1.0",
-    "title": "Cumbuca"
+    "title": "Chac"
   },
   "definitions": {},
   "swagger": "1.0",
@@ -9,7 +9,7 @@
     "/": {
       "get": {
         "description": "Health Check",
-        "operationId": "CumbucaWeb.PageController.health_check",
+        "operationId": "ChacWeb.PageController.health_check",
         "parameters": [],
         "produces": [
           "application/json"
@@ -36,7 +36,7 @@
     "/api/accounts": {
       "get": {
         "description": "Get all accounts",
-        "operationId": "CumbucaWeb.AccountsController.all",
+        "operationId": "ChacWeb.AccountsController.all",
         "parameters": [
           {
             "description": "Access Token",
@@ -127,7 +127,7 @@
           "application/json"
         ],
         "description": "Create account",
-        "operationId": "CumbucaWeb.AccountsController.create",
+        "operationId": "ChacWeb.AccountsController.create",
         "parameters": [],
         "produces": [
           "application/json"
@@ -233,7 +233,7 @@
     "/api/accounts/{account_id}": {
       "delete": {
         "description": "Delete account by id",
-        "operationId": "CumbucaWeb.AccountsController.delete",
+        "operationId": "ChacWeb.AccountsController.delete",
         "parameters": [
           {
             "description": "Access Token",
@@ -323,7 +323,7 @@
       },
       "get": {
         "description": "Get one account by id",
-        "operationId": "CumbucaWeb.AccountsController.one",
+        "operationId": "ChacWeb.AccountsController.one",
         "parameters": [
           {
             "description": "Access Token",
@@ -416,7 +416,7 @@
           "application/json"
         ],
         "description": "Update account",
-        "operationId": "CumbucaWeb.AccountsController.update",
+        "operationId": "ChacWeb.AccountsController.update",
         "parameters": [
           {
             "description": "Access Token",
@@ -530,7 +530,7 @@
           "application/json"
         ],
         "description": "Update access password",
-        "operationId": "CumbucaWeb.AccountsController.patch_access_password",
+        "operationId": "ChacWeb.AccountsController.patch_access_password",
         "parameters": [
           {
             "description": "Access Token",
@@ -589,7 +589,7 @@
     "/api/accounts/{account_id}/balance": {
       "get": {
         "description": "Get balance from account",
-        "operationId": "CumbucaWeb.AccountsController.show_balance",
+        "operationId": "ChacWeb.AccountsController.show_balance",
         "parameters": [
           {
             "description": "Access Token",
@@ -623,7 +623,7 @@
                         "description": "OPERAÇÃO DE DEBITO",
                         "operation": "DEBIT",
                         "refunded?": true,
-                        "refunded_at": "2023-08-22T23:22:50Z"
+                        "refunded_at": "2024-01-10T16:17:14Z"
                       },
                       "properties": {
                         "amount": {
@@ -661,7 +661,7 @@
                         },
                         "refunded_at": {
                           "description": "DateTime when the transaction was refunded",
-                          "example": "2023-08-22T23:22:50Z",
+                          "example": "2024-01-10T16:17:14Z",
                           "type": "utc_datetime"
                         },
                         "updated_at": {
@@ -689,7 +689,7 @@
     "/api/accounts/{account_id}/consolidations": {
       "get": {
         "description": "Get consolidations from account",
-        "operationId": "CumbucaWeb.AccountsController.all_consolidations",
+        "operationId": "ChacWeb.AccountsController.all_consolidations",
         "parameters": [
           {
             "description": "Access Token",
@@ -739,7 +739,7 @@
                         "description": "OPERAÇÃO DE DEBITO",
                         "operation": "DEBIT",
                         "refunded?": true,
-                        "refunded_at": "2023-08-22T23:22:50Z"
+                        "refunded_at": "2024-01-10T16:17:14Z"
                       },
                       "properties": {
                         "amount": {
@@ -777,7 +777,7 @@
                         },
                         "refunded_at": {
                           "description": "DateTime when the transaction was refunded",
-                          "example": "2023-08-22T23:22:50Z",
+                          "example": "2024-01-10T16:17:14Z",
                           "type": "utc_datetime"
                         },
                         "updated_at": {
@@ -808,7 +808,7 @@
           "application/json"
         ],
         "description": "Update transaction password",
-        "operationId": "CumbucaWeb.AccountsController.patch_transaction_password",
+        "operationId": "ChacWeb.AccountsController.patch_transaction_password",
         "parameters": [
           {
             "description": "Access Token",
@@ -870,7 +870,7 @@
           "application/json"
         ],
         "description": "Login",
-        "operationId": "CumbucaWeb.AuthController.login",
+        "operationId": "ChacWeb.AuthController.login",
         "parameters": [],
         "produces": [
           "application/json"
@@ -920,7 +920,7 @@
           "application/json"
         ],
         "description": "Login",
-        "operationId": "CumbucaWeb.AuthController.logout",
+        "operationId": "ChacWeb.AuthController.logout",
         "parameters": [
           {
             "description": "Access Token",
@@ -959,7 +959,7 @@
           "application/json"
         ],
         "description": "Create transaction",
-        "operationId": "CumbucaWeb.TransactionsController.create",
+        "operationId": "ChacWeb.TransactionsController.create",
         "parameters": [
           {
             "description": "Access Token",
@@ -984,12 +984,12 @@
                   },
                   "payer_id": {
                     "description": "Id of payer account",
-                    "example": "266c74f4-4784-4776-8e6d-92c4868bff40",
+                    "example": "4443add6-e006-4f98-b919-e6dceeffc322",
                     "type": "uuid"
                   },
                   "receiver_id": {
                     "description": "Id of receiver account",
-                    "example": "6afb901b-d2bd-46e5-ac4b-9ea1aaf8e2bd",
+                    "example": "3b733967-5010-4aae-8fd8-1ca8704be8bc",
                     "type": "uuid"
                   }
                 }
@@ -1005,7 +1005,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-22T23:22:50Z",
+                    "completed_at": "2024-01-10T16:17:14Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -1016,7 +1016,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-22T23:22:50Z",
+                      "example": "2024-01-10T16:17:14Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -1055,7 +1055,7 @@
           "application/json"
         ],
         "description": "Get transaction",
-        "operationId": "CumbucaWeb.TransactionsController.one",
+        "operationId": "ChacWeb.TransactionsController.one",
         "parameters": [
           {
             "description": "Access Token",
@@ -1084,7 +1084,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-22T23:22:50Z",
+                    "completed_at": "2024-01-10T16:17:14Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -1095,7 +1095,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-22T23:22:50Z",
+                      "example": "2024-01-10T16:17:14Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -1134,7 +1134,7 @@
           "application/json"
         ],
         "description": "Cancel pending transaction",
-        "operationId": "CumbucaWeb.TransactionsController.cancel",
+        "operationId": "ChacWeb.TransactionsController.cancel",
         "parameters": [
           {
             "description": "Access Token",
@@ -1163,7 +1163,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-22T23:22:50Z",
+                    "completed_at": "2024-01-10T16:17:14Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -1174,7 +1174,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-22T23:22:50Z",
+                      "example": "2024-01-10T16:17:14Z",
                       "type": "utc_datetime"
                     },
                     "status": {
@@ -1213,7 +1213,7 @@
           "application/json"
         ],
         "description": "Refund transaction",
-        "operationId": "CumbucaWeb.TransactionsController.refund",
+        "operationId": "ChacWeb.TransactionsController.refund",
         "parameters": [
           {
             "description": "Access Token",
@@ -1242,7 +1242,7 @@
                   "description": "fields available for `BASIC` permission",
                   "example": {
                     "amount": 10000,
-                    "completed_at": "2023-08-22T23:22:50Z",
+                    "completed_at": "2024-01-10T16:17:14Z",
                     "status": "PENDING"
                   },
                   "properties": {
@@ -1253,7 +1253,7 @@
                     },
                     "completed_at": {
                       "description": "DateTime when the transaction was completed",
-                      "example": "2023-08-22T23:22:50Z",
+                      "example": "2024-01-10T16:17:14Z",
                       "type": "utc_datetime"
                     },
                     "status": {

@@ -7,36 +7,36 @@
 # General application configuration
 import Config
 
-config :cumbuca, :swagger,
+config :chac, :swagger,
   host: "localhost",
   port: 4000,
   scheme: "http",
-  base_module: "Cumbuca",
+  base_module: "Chac",
   swagger_files: %{
     "priv/static/swagger.json" => [
-      router: CumbucaWeb.Router
+      router: ChacWeb.Router
     ]
   }
 
-config :cumbuca, swagger_json_library: Jason
+config :chac, swagger_json_library: Jason
 
-config :cumbuca, ecto_repos: [Cumbuca.Repo]
-config :cumbuca, Cumbuca.Repo, migration_primary_key: [type: :binary_id]
+config :chac, ecto_repos: [Chac.Repo]
+config :chac, Chac.Repo, migration_primary_key: [type: :binary_id]
 
-config :cumbuca, CumbucaWeb.Auth,
+config :chac, ChacWeb.Auth,
   issuer: "cumbuca",
   secret_key: "rqvarp+9WBlj4mywg3W3Bz0iSvS0m3aE5FCl9MOTAuHddiwYxjMUXXA+6/T2W9Fh"
 
-config :bee, :repo, Cumbuca.Repo
+config :bee, :repo, Chac.Repo
 
 # Configures the endpoint
-config :cumbuca, CumbucaWeb.Endpoint,
+config :chac, ChacWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [
-    formats: [html: CumbucaWeb.ErrorHTML, json: CumbucaWeb.ErrorJSON],
+    formats: [html: ChacWeb.ErrorHTML, json: ChacWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Cumbuca.PubSub,
+  pubsub_server: Chac.PubSub,
   live_view: [signing_salt: "tqVVI83S"]
 
 # Configures the mailer
@@ -46,7 +46,7 @@ config :cumbuca, CumbucaWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :cumbuca, Cumbuca.Mailer, adapter: Swoosh.Adapters.Local
+config :chac, Chac.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,

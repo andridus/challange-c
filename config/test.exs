@@ -13,20 +13,20 @@ database_url_test =
     For example: ecto://USER:PASS@HOST/DATABASE
     """
 
-config :cumbuca, Cumbuca.Repo,
+config :chac, Chac.Repo,
   url: "#{database_url_test}#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :cumbuca, CumbucaWeb.Endpoint,
+config :chac, ChacWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "z+mFuL39PzpBWfxRCneevXbZLms0O4XFNSMJwSZOgR+yIsY3P06eec14waEPy5AD",
   server: false
 
 # In test we don't send emails.
-config :cumbuca, Cumbuca.Mailer, adapter: Swoosh.Adapters.Test
+config :chac, Chac.Mailer, adapter: Swoosh.Adapters.Test
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false

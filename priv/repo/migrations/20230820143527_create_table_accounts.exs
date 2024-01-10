@@ -1,4 +1,4 @@
-defmodule Cumbuca.Repo.Migrations.CreateTableAccounts do
+defmodule Chac.Repo.Migrations.CreateTableAccounts do
   use Ecto.Migration
 
   def change do
