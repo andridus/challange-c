@@ -84,10 +84,6 @@ Após entrar no bash do container, execute o seguinte comando no terminal:
 Para acessar o swagger navegue até:
  `http://localhost:4001/swagger`
 
-### Executando em cloud
-  accesse  `https://cloud.h2sistemas.com.br`
-  NOTA: O swagger não está habilitado neste ambiente
-
 ### Bibliotecas de terceiros utilizadas
 - [phoenix framework](https://hexdocs.pm/phoenix)
 | Framework base para aplicação
